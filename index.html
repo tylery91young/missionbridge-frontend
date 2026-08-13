@@ -93,6 +93,9 @@
   @media (prefers-reduced-motion: reduce) {
     .hero::before, .hero::after, .archive-panel { animation: none; }
     .archive-panel-tilt { transform: none !important; }
+    .archive-panel-tilt::before { animation: none; opacity: 0.7; }
+    .archive-panel::after { display: none; }
+    .bridge-node::before { display: none; }
     .travel-dot { display: none; }
   }
 
@@ -104,6 +107,9 @@
     font-size: 13.5px;
     font-weight: 600;
     color: var(--navy);
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 4px 14px -8px rgba(184,135,74,0.35);
   }
   .urgency-bar strong { color: var(--accent-deep); }
 
@@ -117,9 +123,10 @@
 
   nav {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(255,255,255,0.86);
+    background: rgba(247,248,250,0.92);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 18px -10px rgba(19,29,39,0.18);
   }
   nav .inner {
     display: flex; align-items: center; justify-content: space-between;
@@ -229,11 +236,21 @@
     border-radius: 50%;
   }
   .archive-panel-tilt {
+    position: relative;
     transform: rotateY(-7deg) rotateX(4deg);
-    transition: transform 0.4s ease;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .archive-panel-tilt:hover { transform: rotateY(-3deg) rotateX(1deg); }
+  .archive-panel-tilt::before {
+    content: '';
+    position: absolute;
+    inset: -34px;
+    background: radial-gradient(ellipse at 50% 38%, rgba(184,135,74,0.24), transparent 68%);
+    filter: blur(28px);
+    z-index: -1;
+    animation: glowPulse 5s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
   }
   .archive-panel {
     position: relative;
@@ -248,6 +265,20 @@
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 4px;
     background: linear-gradient(90deg, var(--navy), var(--accent));
+    z-index: 2;
+  }
+  .archive-panel::after {
+    content: '';
+    position: absolute; top: 0; left: -60%; width: 34%; height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
+    transform: skewX(-15deg);
+    animation: panelSheen 7s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 3;
+  }
+  @keyframes panelSheen {
+    0% { left: -60%; }
+    35%, 100% { left: 130%; }
   }
   .bridge-graphic { position: relative; height: 80px; margin-bottom: 26px; }
   .bridge-path-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -259,8 +290,21 @@
     box-shadow: 0 8px 16px -6px rgba(19,29,39,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
     z-index: 1;
   }
+  .bridge-node::before {
+    content: '';
+    position: absolute; inset: -6px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    animation: radarPulse 3s ease-out infinite;
+  }
   .bridge-node-left { left: 0; background: radial-gradient(circle at 32% 26%, #405670, var(--navy) 62%, var(--navy-mid)); color: #fff; }
   .bridge-node-right { right: 0; background: radial-gradient(circle at 32% 26%, #d7ab72, var(--accent) 62%, var(--accent-deep)); color: var(--navy-deep); }
+  .bridge-node-left::before { border-color: rgba(43,58,74,0.35); }
+  .bridge-node-right::before { border-color: rgba(184,135,74,0.4); animation-delay: 1.5s; }
+  @keyframes radarPulse {
+    0% { transform: scale(0.82); opacity: 0.6; }
+    100% { transform: scale(1.55); opacity: 0; }
+  }
 
   .travel-dot {
     position: absolute;
@@ -352,10 +396,13 @@
   .archive-panel-foot strong { color: var(--navy); }
 
   .trust-strip {
-    background: var(--white);
+    background: linear-gradient(180deg, var(--bg-soft), var(--white));
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     padding: 26px 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow-sm);
   }
   .trust-strip .wrap {
     display: flex; justify-content: center; gap: 56px; row-gap: 22px; flex-wrap: wrap;
@@ -456,6 +503,7 @@
     font-size: 14px; font-weight: 600;
     padding: 13px 18px; border-radius: 10px;
     margin-bottom: 26px; text-align: center;
+    box-shadow: 0 4px 12px -6px rgba(184,135,74,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
   }
   .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
   .product-grid.single { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
@@ -489,14 +537,14 @@
   .product-card.secondary .product-list li { color: var(--ink-soft); }
 
   .waitlist {
-    background: var(--navy);
+    background: linear-gradient(165deg, #34465a, var(--navy) 60%, var(--navy-mid));
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 28px;
     padding: 64px 52px;
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 40px 70px -30px rgba(19,29,39,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
   }
   .waitlist::before {
     content: '';
@@ -513,6 +561,7 @@
     border: 1px solid rgba(255,255,255,0.16);
     background: rgba(255,255,255,0.06);
     color: var(--white); font-size: 15px; font-family: 'Inter', sans-serif;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
   }
   .signup-form input::placeholder { color: rgba(255,255,255,0.42); }
   .signup-form input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -563,7 +612,7 @@
     outline-offset: 3px;
   }
 
-  footer { padding: 60px 0; background: var(--navy-deep); }
+  footer { padding: 60px 0; background: var(--navy-deep); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
   footer .wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
   footer .logo svg { height: 30px; }
   .fnote { color: rgba(255,255,255,0.5); font-size: 13.5px; }
@@ -630,7 +679,14 @@
       <div class="archive-panel" id="archive-panel">
         <div class="bridge-graphic" aria-hidden="true">
           <svg class="bridge-path-svg" viewBox="0 0 360 92" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M40,68 Q180,16 320,68" fill="none" stroke="#E6E9ED" stroke-width="2"/>
+            <defs>
+              <linearGradient id="bridgeLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#2B3A4A" stop-opacity="0.4"/>
+                <stop offset="50%" stop-color="#B8874A" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#2B3A4A" stop-opacity="0.4"/>
+              </linearGradient>
+            </defs>
+            <path d="M40,68 Q180,16 320,68" fill="none" stroke="url(#bridgeLineGrad)" stroke-width="2.4" stroke-linecap="round"/>
           </svg>
           <div class="travel-dot travel-dot--mail">
             <svg viewBox="0 0 20 20" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="14" height="10" rx="1.5"/><path d="M3.5 6.5l6.5 5 6.5-5"/></svg>
