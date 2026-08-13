@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --white: #FFFFFF;
@@ -48,9 +48,9 @@
   }
 
   h1, h2, h3, .display {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 500;
-    letter-spacing: -0.012em;
+    letter-spacing: -0.01em;
   }
 
   .wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
@@ -70,12 +70,22 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
+  @keyframes travelPath {
+    0%   { left: 11.1%; top: 73.9%; opacity: 0; }
+    8%   { opacity: 1; }
+    25%  { left: 30.6%; top: 52.7%; }
+    50%  { left: 50%;   top: 45.7%; }
+    75%  { left: 69.4%; top: 52.7%; }
+    92%  { opacity: 1; }
+    100% { left: 88.9%; top: 73.9%; opacity: 0; }
+  }
   .hero::before, .hero::after { animation: ambientDrift 16s ease-in-out infinite; }
   .hero::after { animation-direction: reverse; animation-duration: 19s; }
   .archive-panel { animation: floatCard 7s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) {
     .hero::before, .hero::after, .archive-panel { animation: none; }
-    .motion-dot { display: none; }
+    .archive-panel-tilt { transform: none !important; }
+    .travel-dot { display: none; }
   }
 
   .urgency-bar {
@@ -84,7 +94,7 @@
     text-align: center;
     padding: 10px 20px;
     font-size: 13.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--navy);
   }
   .urgency-bar strong { color: var(--accent-deep); }
@@ -111,18 +121,19 @@
   .logo { display: flex; align-items: center; }
   .logo svg { height: 36px; width: auto; }
   .nav-cta {
-    background: var(--navy);
+    background: linear-gradient(160deg, #34465a, var(--navy));
     color: var(--white);
     border: none;
     padding: 11px 24px;
     border-radius: 100px;
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14.5px;
     cursor: pointer;
+    box-shadow: 0 4px 10px -4px rgba(19,29,39,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   }
-  .nav-cta:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .nav-cta:hover { background: linear-gradient(160deg, #3d5268, var(--navy-mid)); transform: translateY(-1px); box-shadow: var(--shadow-sm), 0 6px 14px -4px rgba(19,29,39,0.4); }
 
   .hero {
     background: var(--white);
@@ -160,7 +171,7 @@
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--accent-deep);
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 24px;
   }
   .eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--accent-deep); }
@@ -172,9 +183,9 @@
     font-weight: 500;
   }
   h1.hero-head em {
-    font-style: italic;
+    font-style: normal;
     color: var(--accent-deep);
-    font-weight: 500;
+    font-weight: 600;
   }
   .hero-sub {
     font-size: 18.5px;
@@ -184,28 +195,45 @@
   }
   .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
   .btn-primary {
-    background: var(--navy);
+    background: linear-gradient(160deg, #34465a, var(--navy));
     color: var(--white);
     border: none;
     padding: 16px 30px;
     border-radius: 100px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
+    box-shadow: 0 10px 20px -10px rgba(19,29,39,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
   }
-  .btn-primary:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(43,58,74,0.45); }
+  .btn-primary:hover { background: linear-gradient(160deg, #3d5268, var(--navy-mid)); transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(43,58,74,0.45); }
   .hero-note { font-size: 13.5px; color: var(--ink-faint); font-weight: 600; }
 
-  .hero-visual-wrap { position: relative; }
+  .hero-visual-wrap { position: relative; perspective: 1600px; }
+  .hero-visual-wrap::after {
+    content: '';
+    position: absolute;
+    left: 10%; right: 10%; bottom: -22px; height: 44px;
+    background: radial-gradient(ellipse, rgba(19,29,39,0.30), transparent 72%);
+    filter: blur(16px);
+    z-index: -1;
+    border-radius: 50%;
+  }
+  .archive-panel-tilt {
+    transform: rotateY(-7deg) rotateX(4deg);
+    transition: transform 0.4s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .archive-panel-tilt:hover { transform: rotateY(-3deg) rotateX(1deg); }
+  }
   .archive-panel {
     position: relative;
     background: linear-gradient(165deg, #FFFFFF, #FBFAF6);
     border: 1px solid var(--border);
     border-radius: 28px;
     padding: 36px 32px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 30px 60px -24px rgba(19,29,39,0.35), inset 0 1px 0 rgba(255,255,255,0.7);
     overflow: hidden;
   }
   .archive-panel::before {
@@ -220,14 +248,31 @@
     width: 44px; height: 44px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 8px 16px -6px rgba(19,29,39,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
     z-index: 1;
   }
-  .bridge-node-left { left: 0; background: var(--navy); color: #fff; }
-  .bridge-node-right { right: 0; background: var(--accent); color: var(--navy-deep); }
+  .bridge-node-left { left: 0; background: radial-gradient(circle at 32% 26%, #405670, var(--navy) 62%, var(--navy-mid)); color: #fff; }
+  .bridge-node-right { right: 0; background: radial-gradient(circle at 32% 26%, #d7ab72, var(--accent) 62%, var(--accent-deep)); color: var(--navy-deep); }
+
+  .travel-dot {
+    position: absolute;
+    top: 0; left: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 5px 12px -3px rgba(19,29,39,0.4), inset 0 1px 1px rgba(255,255,255,0.35);
+    transform: translate(-50%, -50%);
+    animation-name: travelPath;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  .travel-dot svg { width: 14px; height: 14px; display: block; }
+  .travel-dot--mail { background: radial-gradient(circle at 32% 28%, #d9ab6f, var(--accent) 60%, var(--accent-deep)); animation-duration: 3.6s; animation-delay: 0s; }
+  .travel-dot--camera { background: radial-gradient(circle at 32% 28%, #405670, var(--navy) 60%, var(--navy-mid)); animation-duration: 4.1s; animation-delay: 1.1s; }
+  .travel-dot--mic { background: radial-gradient(circle at 32% 28%, #d9ab6f, var(--accent) 60%, var(--accent-deep)); animation-duration: 4.7s; animation-delay: 2.2s; }
   .bridge-node-label {
     position: absolute; top: 56px;
-    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--ink-faint);
   }
   .bridge-node-label-left { left: 0; }
@@ -237,7 +282,7 @@
     font-size: 11.5px;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 24px;
     text-align: center;
   }
@@ -277,14 +322,15 @@
     flex-shrink: 0;
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: var(--bg-soft);
+    background: linear-gradient(155deg, #FFFFFF, var(--bg-soft));
     border: 1px solid var(--border-soft);
     display: flex; align-items: center; justify-content: center;
     z-index: 1;
     color: var(--navy);
+    box-shadow: 0 4px 10px -4px rgba(19,29,39,0.2), inset 0 1px 0 rgba(255,255,255,0.8);
   }
   .thread-body { flex: 1; min-width: 0; }
-  .thread-title { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+  .thread-title { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
   .thread-sub { font-size: 12.5px; color: var(--ink-faint); }
   .archive-panel-foot {
     margin-top: 22px; padding-top: 18px;
@@ -307,7 +353,8 @@
   }
   .trust-stat { max-width: 200px; }
   .trust-stat strong {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
     font-size: 27px;
     line-height: 1.2;
     color: var(--navy);
@@ -319,7 +366,7 @@
     font-size: 12.5px;
     line-height: 1.4;
     color: var(--ink-soft);
-    font-weight: 600;
+    font-weight: 500;
   }
   .trust-stat strong .count-up { display: inline; font-size: inherit; color: inherit; font-weight: inherit; }
 
@@ -328,29 +375,29 @@
   .section-head { max-width: 620px; margin-bottom: 58px; }
   .section-eyebrow {
     font-size: 12.5px; letter-spacing: 0.09em; text-transform: uppercase;
-    color: var(--accent-deep); font-weight: 700; margin-bottom: 14px;
+    color: var(--accent-deep); font-weight: 600; margin-bottom: 14px;
   }
   h2.section-title {
     font-size: clamp(28px, 3.4vw, 40px);
     color: var(--navy);
     line-height: 1.16;
   }
-  .section-title em { font-style: italic; color: var(--accent-deep); font-weight: 500; }
+  .section-title em { font-style: normal; color: var(--accent-deep); font-weight: 600; }
 
   .quote-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .quote-card {
     position: relative;
-    background: var(--white);
+    background: linear-gradient(165deg, #FFFFFF, var(--bg-soft));
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 30px 28px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.8);
     overflow: hidden;
   }
   .quote-card::before {
     content: '\201C';
     position: absolute; top: -18px; left: 14px;
-    font-family: 'Playfair Display', serif;
+    font-family: Georgia, serif;
     font-size: 90px;
     color: var(--accent-soft);
     z-index: 0;
@@ -376,19 +423,20 @@
   .how-dot {
     width: 64px; height: 64px;
     border-radius: 50%;
-    background: var(--navy);
+    background: radial-gradient(circle at 32% 26%, #405670, var(--navy) 62%, var(--navy-mid));
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
     color: var(--white);
     z-index: 1;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 10px 20px -8px rgba(19,29,39,0.45), inset 0 1px 1px rgba(255,255,255,0.25);
   }
-  .how-row h3 { font-size: 22px; color: var(--navy); margin-bottom: 8px; }
+  .how-row h3 { font-size: 21px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
   .how-row p { color: var(--ink-soft); max-width: 540px; }
   .how-closer {
-    text-align: center; margin-top: 44px; font-family: 'Playfair Display', serif;
-    font-size: 20px; color: var(--navy); font-style: italic;
+    text-align: center; margin-top: 44px; font-family: 'Inter', sans-serif;
+    font-weight: 500; font-size: 19px; color: var(--navy); font-style: normal;
   }
 
   .founding-note {
@@ -402,15 +450,15 @@
   .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
   .product-grid.single { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
   .product-card { position: relative; border-radius: 22px; padding: 42px 38px; overflow: hidden; }
-  .product-card.primary { background: var(--navy); color: var(--white); box-shadow: var(--shadow-lg); }
+  .product-card.primary { background: linear-gradient(160deg, #34465a, var(--navy) 55%, var(--navy-mid)); color: var(--white); box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.1); }
   .product-card.primary::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 4px;
     background: linear-gradient(90deg, var(--accent), var(--navy-mid));
   }
-  .product-card.secondary { background: var(--white); border: 1px solid var(--border); }
+  .product-card.secondary { background: linear-gradient(165deg, #FFFFFF, var(--bg-soft)); border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
   .product-tag {
-    display: inline-block; font-size: 11.5px; font-weight: 700;
+    display: inline-block; font-size: 11.5px; font-weight: 600;
     letter-spacing: 0.07em; text-transform: uppercase;
     padding: 5px 12px; border-radius: 100px; margin-bottom: 20px;
   }
@@ -422,7 +470,7 @@
   .product-card p { font-size: 15.5px; margin-bottom: 24px; }
   .product-card.primary p { color: rgba(255,255,255,0.75); }
   .product-card.secondary p { color: var(--ink-soft); }
-  .product-price { font-family: 'Playfair Display', serif; font-size: 36px; }
+  .product-price { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 34px; }
   .product-price span { font-size: 14.5px; font-weight: 600; opacity: 0.6; }
   .product-list { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
   .product-list li { font-size: 14.5px; display: flex; gap: 10px; align-items: flex-start; }
@@ -474,7 +522,7 @@
   .status-option span {
     display: inline-flex; padding: 9px 16px; border-radius: 100px;
     border: 1px solid rgba(255,255,255,0.22); background: transparent;
-    color: rgba(255,255,255,0.7); font-size: 13.5px; font-weight: 600;
+    color: rgba(255,255,255,0.7); font-size: 13.5px; font-weight: 500;
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
   .status-option input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--navy-deep); }
@@ -491,8 +539,9 @@
   .terms-check input { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
   .terms-check a { color: rgba(255,255,255,0.75); text-decoration: underline; }
   .signup-form button {
-    background: var(--accent); color: var(--navy-deep); border: none;
-    padding: 16px 28px; border-radius: 100px; font-weight: 700; font-size: 15.5px;
+    background: linear-gradient(160deg, #d7ab72, var(--accent)); color: var(--navy-deep); border: none;
+    padding: 16px 28px; border-radius: 100px; font-weight: 600; font-size: 15.5px;
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
     cursor: pointer; transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease; margin-top: 6px;
   }
   .signup-form button:hover { background: var(--accent-deep); color: var(--white); transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
@@ -517,6 +566,7 @@
     .section { padding: 64px 0; }
     .waitlist { padding: 48px 28px; }
     .archive-panel { padding: 28px 24px; }
+    .archive-panel-tilt { transform: none; }
   }
 </style>
 </head>
@@ -566,42 +616,21 @@
       </div>
     </div>
     <div class="hero-visual-wrap reveal">
+      <div class="archive-panel-tilt">
       <div class="archive-panel" id="archive-panel">
         <div class="bridge-graphic" aria-hidden="true">
           <svg class="bridge-path-svg" viewBox="0 0 360 92" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <symbol id="travelMail" viewBox="0 0 20 20">
-                <circle cx="10" cy="10" r="10" fill="#B8874A"/>
-                <rect x="5" y="6.5" width="10" height="7.4" rx="1" fill="none" stroke="#FFFFFF" stroke-width="1.3"/>
-                <path d="M5 7.2l5 3.6 5-3.6" fill="none" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-              </symbol>
-              <symbol id="travelCamera" viewBox="0 0 20 20">
-                <circle cx="10" cy="10" r="10" fill="#2B3A4A"/>
-                <path d="M5.2 7.6h2.1l1.1-1.6h3.2l1.1 1.6h2.1a.8.8 0 0 1 .8.8v5.4a.8.8 0 0 1-.8.8H5.2a.8.8 0 0 1-.8-.8V8.4a.8.8 0 0 1 .8-.8z" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round"/>
-                <circle cx="10" cy="10.8" r="2.1" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
-              </symbol>
-              <symbol id="travelMic" viewBox="0 0 20 20">
-                <circle cx="10" cy="10" r="10" fill="#B8874A"/>
-                <rect x="8.3" y="4.2" width="3.4" height="6.6" rx="1.7" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
-                <path d="M6 10.4a4 4 0 0 0 8 0" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
-                <line x1="10" y1="14.4" x2="10" y2="16" stroke="#FFFFFF" stroke-width="1.2"/>
-                <line x1="8" y1="16" x2="12" y2="16" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
-              </symbol>
-            </defs>
             <path d="M40,68 Q180,16 320,68" fill="none" stroke="#E6E9ED" stroke-width="2"/>
-            <use class="motion-dot" href="#travelMail" x="-8" y="-8" width="16" height="16">
-              <animateMotion dur="3.6s" repeatCount="indefinite" begin="0s" path="M40,68 Q180,16 320,68"/>
-              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="3.6s" repeatCount="indefinite" begin="0s"/>
-            </use>
-            <use class="motion-dot" href="#travelCamera" x="-8" y="-8" width="16" height="16">
-              <animateMotion dur="4.1s" repeatCount="indefinite" begin="1.1s" path="M40,68 Q180,16 320,68"/>
-              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="4.1s" repeatCount="indefinite" begin="1.1s"/>
-            </use>
-            <use class="motion-dot" href="#travelMic" x="-8" y="-8" width="16" height="16">
-              <animateMotion dur="4.7s" repeatCount="indefinite" begin="2.2s" path="M40,68 Q180,16 320,68"/>
-              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="4.7s" repeatCount="indefinite" begin="2.2s"/>
-            </use>
           </svg>
+          <div class="travel-dot travel-dot--mail">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="14" height="10" rx="1.5"/><path d="M3.5 6.5l6.5 5 6.5-5"/></svg>
+          </div>
+          <div class="travel-dot travel-dot--camera">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h2.3l1.2-1.8h5l1.2 1.8H16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z"/><circle cx="10" cy="11" r="2.3"/></svg>
+          </div>
+          <div class="travel-dot travel-dot--mic">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3.5" width="4" height="7" rx="2"/><path d="M5.5 10.5a4.5 4.5 0 0 0 9 0"/><line x1="10" y1="15" x2="10" y2="16.8"/><line x1="7.5" y1="16.8" x2="12.5" y2="16.8"/></svg>
+          </div>
           <div class="bridge-node bridge-node-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
           </div>
@@ -620,6 +649,7 @@
           <div class="thread-item"><div class="thread-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><div class="thread-body"><div class="thread-title">Kept safe, permanently</div><div class="thread-sub">Long after their account is gone</div></div></div>
         </div>
         <div class="archive-panel-foot">No app to download. <strong>Just the email they already send.</strong></div>
+      </div>
       </div>
     </div>
   </div>
