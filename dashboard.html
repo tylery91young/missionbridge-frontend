@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Bridge: Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A;
+    --navy-deep: #1D2733;
+    --cream: #F7F3EC;
+    --cream-warm: #F1EADD;
+    --clay: #C8745C;
+    --clay-deep: #B05F49;
+    --charcoal: #363330;
+    --sage: #8A9A8E;
+    --line: rgba(54,51,48,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- HEADER ---------- */
+  header {
+    background: var(--navy);
+    padding: 36px 0 44px;
+  }
+  .header-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+  }
+  .header-top > div:first-child { flex-shrink: 0; }
+  .brand { color: rgba(247,243,236,0.5); font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .brand svg { flex-shrink: 0; overflow: visible; display: block; }
+  h1 {
+    color: var(--cream);
+    font-size: clamp(28px, 4vw, 38px);
+    margin-top: 6px;
+  }
+  .stats-row { display: flex; gap: 28px; flex-wrap: wrap; }
+  .stat { color: rgba(247,243,236,0.85); }
+  .stat strong { display: block; font-family: 'Fraunces', serif; font-size: 24px; color: var(--cream); }
+  .stat span { font-size: 12.5px; color: rgba(247,243,236,0.5); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .link-security-note {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: rgba(247,243,236,0.07);
+    border: 1px solid rgba(247,243,236,0.14);
+    border-radius: 10px;
+    color: rgba(247,243,236,0.85);
+    font-size: 13.5px;
+    line-height: 1.5;
+    max-width: 560px;
+  }
+
+  .sharing-row { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(247,243,236,0.1); }
+  .sharing-toggle {
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    color: rgba(247,243,236,0.9); font-size: 14px; font-weight: 600;
+  }
+  .sharing-toggle input { width: 16px; height: 16px; accent-color: var(--clay); cursor: pointer; }
+  .sharing-hint { color: rgba(247,243,236,0.5); font-size: 12.5px; margin-top: 6px; max-width: 480px; }
+
+  .download-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .dl-btn {
+    background: rgba(247,243,236,0.1);
+    border: 1px solid rgba(247,243,236,0.18);
+    color: var(--cream);
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .dl-btn:hover { background: rgba(247,243,236,0.18); }
+
+  /* ---------- FILTER BAR ---------- */
+  .filter-bar {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(247,243,236,0.94);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+  }
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-chip {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--charcoal);
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter-chip:hover { border-color: var(--sage); }
+  .filter-chip.active { background: var(--navy); color: var(--cream); border-color: var(--navy); }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline { padding: 28px 0 60px; }
+  .moment {
+    border-bottom: 1px solid var(--line);
+    padding: 24px 0;
+  }
+  .moment:first-child { padding-top: 0; }
+  .moment-date {
+    font-size: 12px; font-weight: 700; color: var(--clay-deep);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .moment-subject {
+    font-size: 18px; color: var(--navy); margin-bottom: 8px;
+  }
+  .moment-text {
+    color: rgba(54,51,48,0.82);
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+    max-width: 640px;
+    font-size: 15px;
+    text-align: left;
+  }
+  .drive-warning {
+    background: rgba(200,116,92,0.1);
+    border: 1px solid rgba(200,116,92,0.3);
+    color: var(--clay-deep);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    margin-bottom: 12px;
+    max-width: 640px;
+  }
+
+  .audio-player {
+    background: var(--cream-warm);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .audio-player audio { flex: 1; height: 32px; min-width: 0; }
+  .item-dl {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    color: var(--sage);
+    text-decoration: none;
+    font-size: 16px;
+    transition: background 0.15s ease;
+  }
+  .item-dl:hover { background: rgba(138,154,142,0.15); }
+  .item-del {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: none; background: transparent;
+    color: var(--sage);
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .item-del:hover { background: rgba(176,71,63,0.12); color: #B0473F; }
+
+  .moment-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px; margin-bottom: 6px;
+  }
+  .moment-del {
+    background: transparent; border: none; color: var(--sage);
+    font-size: 12px; cursor: pointer; text-decoration: underline;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .moment:hover .moment-del { opacity: 1; }
+  .moment-del:hover { color: #B0473F; }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 6px;
+  }
+  .photo-item { position: relative; }
+  .photo-item img {
+    width: 100%; aspect-ratio: 1; object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    transition: opacity 0.15s ease;
+  }
+  .photo-item img:hover { opacity: 0.85; }
+  .photo-dl {
+    position: absolute; bottom: 6px; right: 6px;
+    width: 28px; height: 28px;
+    background: rgba(29,39,51,0.65);
+    color: var(--cream);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .photo-item:hover .photo-dl { opacity: 1; }
+  .photo-del {
+    position: absolute; bottom: 6px; left: 6px;
+    width: 28px; height: 28px;
+    background: rgba(29,39,51,0.65);
+    color: var(--cream);
+    border: none;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease;
+  }
+  .photo-item:hover .photo-del { opacity: 1; }
+  .photo-del:hover { background: #B0473F; }
+
+  .moment-media-only { border-bottom: 1px solid var(--line); padding: 28px 0; }
+  .moment-media-only:first-child { padding-top: 0; }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--sage);
+  }
+  .empty-state h2 { color: var(--navy); margin-bottom: 10px; font-size: 22px; }
+
+  /* ---------- LIGHTBOX ---------- */
+  .lightbox {
+    position: fixed; inset: 0; background: rgba(29,39,51,0.92);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 24px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; }
+  .lightbox-close {
+    position: absolute; top: 24px; right: 24px;
+    background: rgba(247,243,236,0.12); color: var(--cream);
+    border: none; width: 40px; height: 40px; border-radius: 50%;
+    font-size: 18px; cursor: pointer;
+  }
+  .lightbox-dl {
+    position: absolute; top: 24px; left: 24px;
+    background: var(--clay); color: var(--cream);
+    border: none; padding: 10px 18px; border-radius: 100px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .loading { text-align: center; padding: 100px 24px; color: var(--sage); }
+
+  @media (max-width: 600px) {
+    header { padding: 24px 0 28px; }
+    .header-top { margin-bottom: 18px; }
+    .download-row { width: 100%; }
+    .dl-btn { font-size: 12.5px; padding: 8px 14px; flex: 1; justify-content: center; }
+    .stats-row { gap: 14px; }
+    .stat strong { font-size: 20px; }
+    .stat span { font-size: 11px; }
+    .filter-row { gap: 6px; }
+    .filter-chip { font-size: 12.5px; padding: 7px 13px; }
+    .moment-subject { font-size: 17px; }
+    .photo-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 5px; }
+    .wrap { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="header-top">
+      <div>
+        <div class="brand">
+          <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg" style="height: 22px; width: auto;">
+            <defs>
+              <linearGradient id="fadeLeftDash" x1="100%" y1="0%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#F7F3EC" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#F7F3EC" stop-opacity="0"/>
+              </linearGradient>
+              <clipPath id="fiveEighthsClipDash">
+                <rect x="0" y="0" width="160" height="56"/>
+              </clipPath>
+            </defs>
+            <g clip-path="url(#fiveEighthsClipDash)">
+              <line x1="60" y1="2" x2="60" y2="42" stroke="#F7F3EC" stroke-width="5" stroke-linecap="round"/>
+              <path d="M 60 2 Q 140 32 220 2" stroke="#F7F3EC" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftDash)" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <line x1="60" y1="26" x2="220" y2="26" stroke="#F7F3EC" stroke-width="3" stroke-linecap="round"/>
+              <line x1="75" y1="7.1" x2="75" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+              <line x1="90" y1="11.1" x2="90" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+              <line x1="105" y1="14.1" x2="105" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+              <line x1="120" y1="16.1" x2="120" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+              <line x1="135" y1="16.9" x2="135" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+              <line x1="150" y1="16.8" x2="150" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+            </g>
+            <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#F7F3EC">Mission Bridge</text>
+          </svg>
+        </div>
+        <h1 id="missionary-title">Loading archive…</h1>
+      </div>
+      <div class="download-row" id="download-row">
+        <a class="dl-btn" id="dl-all" href="#">↓ Download everything</a>
+        <a class="dl-btn" id="dl-photos" href="#">↓ Photos only</a>
+        <a class="dl-btn" id="dl-emails" href="#">↓ Emails only</a>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><strong id="stat-moments">—</strong><span>Emails</span></div>
+      <div class="stat"><strong id="stat-photos">—</strong><span>Photos</span></div>
+      <div class="stat"><strong id="stat-audio">—</strong><span>Voice memos</span></div>
+    </div>
+    <div class="link-security-note">
+      🔒 There's no password on this page. This exact link is the only way anyone sees this dashboard, so bookmark it somewhere safe and only share it with people you trust.
+    </div>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <div class="wrap filter-row">
+    <button class="filter-chip active" data-filter="all">All</button>
+    <button class="filter-chip" data-filter="photos">Photos</button>
+    <button class="filter-chip" data-filter="audio">Voice memos</button>
+    <button class="filter-chip" data-filter="text">Written emails</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="content" class="loading">Loading their archive…</div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <a class="lightbox-dl" id="lightbox-dl" href="#" download title="Download this photo">↓ Download</a>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+const BACKEND = 'https://missionbridge-backend.onrender.com';
+
+// Get missionary email from URL, e.g. dashboard.html?email=elder@missionary.org
+const params = new URLSearchParams(window.location.search);
+const missionaryEmail = params.get('email');
+const isAdminPreview = params.get('adminPreview') === '1';
+
+let allMoments = [];
+let currentFilter = 'all';
+const allowDownloads = true; // the link itself is the only access control now - see link-security-note
+
+async function loadDashboard() {
+  if (!missionaryEmail) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty-state">
+        <h2>No missionary specified</h2>
+        <p>Add ?email=their-address to the URL to view their archive.</p>
+      </div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND}/dashboard/${encodeURIComponent(missionaryEmail)}${isAdminPreview ? '?adminPreview=1' : ''}`);
+    const data = await res.json();
+
+    allMoments = data.moments || [];
+
+    const name = data.missionary?.missionary_name || data.missionary?.missionary_email || missionaryEmail;
+    document.getElementById('missionary-title').textContent = name + "'s Mission Archive";
+    document.getElementById('stat-moments').textContent = data.totalMoments;
+    document.getElementById('stat-photos').textContent = data.totalPhotos;
+    document.getElementById('stat-audio').textContent = data.totalAudio;
+
+    document.getElementById('dl-all').href = `${BACKEND}/download/${encodeURIComponent(missionaryEmail)}?type=all`;
+    document.getElementById('dl-photos').href = `${BACKEND}/download/${encodeURIComponent(missionaryEmail)}?type=photos`;
+    document.getElementById('dl-emails').href = `${BACKEND}/download/${encodeURIComponent(missionaryEmail)}?type=emails`;
+
+    renderMoments();
+  } catch (err) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty-state">
+        <h2>Something went wrong</h2>
+        <p>We couldn't load this archive right now. Please try again shortly.</p>
+      </div>`;
+  }
+}
+
+function renderMoments() {
+  const content = document.getElementById('content');
+
+  let filtered = allMoments;
+  if (currentFilter === 'photos') filtered = allMoments.filter(m => m.photos.length > 0);
+  if (currentFilter === 'audio') filtered = allMoments.filter(m => m.audio.length > 0);
+  if (currentFilter === 'text') filtered = allMoments.filter(m => m.text && m.text.trim().length > 0);
+
+  if (filtered.length === 0) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <h2>Nothing here yet</h2>
+        <p>Once they send an email, it'll show up here automatically.</p>
+      </div>`;
+    return;
+  }
+
+  const rendered = filtered.map(renderMoment).filter(html => html.trim().length > 0);
+  content.innerHTML = `<div class="timeline">${rendered.join('')}</div>`;
+}
+
+function renderMoment(m) {
+  const date = new Date(m.receivedAt).toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
+
+  const issueMessages = {
+    drive_file_link: "This email shared a Google Drive file link. We can't access third-party Drive links, so this won't be saved automatically. Open the original email and download it yourself.",
+    photos_album_link: "This email shared a Google Photos album link instead of attaching photos directly. We can't access shared photo albums, so these won't be saved automatically. Open the original email and download them yourself.",
+    drive_and_photos_link: "This email shared both a Google Drive link and a Google Photos link. We can't access either as a third party, so neither will be saved automatically. Open the original email and download them yourself.",
+  };
+
+  let driveLinkWarning = '';
+  if (m.detectedIssueType && issueMessages[m.detectedIssueType]) {
+    const extraNote = m.isMostlyLink
+      ? ' It looks like this email was mostly just the link, with little or no written update.'
+      : '';
+    driveLinkWarning = `
+      <div class="drive-warning">
+        ⚠️ ${issueMessages[m.detectedIssueType]}${extraNote}
+      </div>
+    `;
+  }
+
+  const audioHtml = m.audio.map(a => `
+    <div class="audio-player">
+      <audio controls src="${a.url}"></audio>
+      ${allowDownloads ? `<a class="item-dl" href="${a.url}" download="${escapeHtml(a.original_name)}" title="Download this audio">↓</a>
+      <button class="item-del" onclick="deleteAttachment(${a.id})" title="Delete this audio">✕</button>` : ''}
+    </div>
+  `).join('');
+
+  const photosHtml = m.photos.length ? `
+    <div class="photo-grid">
+      ${m.photos.map(p => `
+        <div class="photo-item">
+          <img src="${p.url}" alt="${escapeHtml(p.original_name)}" onclick="openLightbox('${p.url}', '${escapeHtml(p.original_name)}', ${allowDownloads})">
+          ${allowDownloads ? `<a class="photo-dl" href="${p.url}" download="${escapeHtml(p.original_name)}" title="Download this photo">↓</a>
+          <button class="photo-del" onclick="deleteAttachment(${p.id})" title="Delete this photo">✕</button>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
+  // When filtering to just photos, audio, or text - show ONLY that
+  // content type, not everything else mixed in.
+  if (currentFilter === 'photos') {
+    return photosHtml ? `<div class="moment moment-media-only"><div class="moment-date">${date}</div>${photosHtml}</div>` : '';
+  }
+  if (currentFilter === 'audio') {
+    return audioHtml ? `<div class="moment moment-media-only"><div class="moment-date">${date}</div>${audioHtml}</div>` : '';
+  }
+  if (currentFilter === 'text') {
+    if (!m.text || !m.text.trim()) return '';
+    return `
+      <div class="moment moment-media-only">
+        <div class="moment-date">${date}</div>
+        ${m.subject ? `<h2 class="moment-subject">${escapeHtml(m.subject)}</h2>` : ''}
+        <p class="moment-text">${escapeHtml(m.text)}</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="moment">
+      <div class="moment-header">
+        <div class="moment-date">${date}</div>
+        ${allowDownloads ? `<button class="moment-del" onclick="deleteEmail(${m.id})" title="Delete this entire email">Delete email</button>` : ''}
+      </div>
+      ${m.subject ? `<h2 class="moment-subject">${escapeHtml(m.subject)}</h2>` : ''}
+      ${driveLinkWarning}
+      ${m.text ? `<p class="moment-text">${escapeHtml(m.text)}</p>` : ''}
+      ${audioHtml}
+      ${photosHtml}
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+async function deleteAttachment(attachmentId) {
+  const confirmed = confirm("Delete this permanently? This can't be undone from here, so please make sure you've downloaded it first if you want to keep it.");
+  if (!confirmed) return;
+
+  try {
+    await fetch(`${BACKEND}/dashboard/attachment/${attachmentId}`, { method: 'DELETE' });
+    await loadDashboard();
+  } catch (err) {
+    alert('Something went wrong deleting this. Please try again.');
+  }
+}
+
+async function deleteEmail(emailId) {
+  const confirmed = confirm("Delete this entire email, including any photos or audio attached to it? This can't be undone from here, so please make sure you've downloaded anything you want to keep first.");
+  if (!confirmed) return;
+
+  try {
+    await fetch(`${BACKEND}/dashboard/email/${emailId}`, { method: 'DELETE' });
+    await loadDashboard();
+  } catch (err) {
+    alert('Something went wrong deleting this. Please try again.');
+  }
+}
+
+function openLightbox(url, filename, showDownload = true) {
+  document.getElementById('lightbox-img').src = url;
+  const dl = document.getElementById('lightbox-dl');
+  dl.href = url;
+  dl.setAttribute('download', filename || 'photo.jpg');
+  dl.style.display = showDownload ? 'inline-block' : 'none';
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    renderMoments();
+  });
+});
+
+loadDashboard();
+</script>
+
+</body>
+</html>

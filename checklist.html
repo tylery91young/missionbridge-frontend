@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>End-of-mission checklist - Mission Bridge</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A; --navy-deep: #1D2733; --cream: #F7F3EC; --cream-warm: #F1EADD;
+    --clay: #C8745C; --clay-deep: #B05F49; --charcoal: #363330; --sage: #8A9A8E; --sage-deep: #6E7E72; --line: rgba(54,51,48,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--charcoal); font-family: 'Source Sans 3', sans-serif; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 500; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 28px; }
+  nav { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .logo svg { height: 34px; width: auto; }
+
+  main { padding: 52px 0 80px; }
+  h1 { color: var(--navy); font-size: clamp(26px, 4vw, 34px); margin-bottom: 10px; }
+  .sub { color: rgba(54,51,48,0.72); font-size: 16px; margin-bottom: 36px; max-width: 480px; }
+
+  .item {
+    display: flex; gap: 16px;
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    padding: 22px 24px; margin-bottom: 14px;
+  }
+  .item.done { border-color: rgba(138,154,142,0.4); background: rgba(138,154,142,0.06); }
+  .check-circle {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid rgba(54,51,48,0.25); background: transparent;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    margin-top: 2px;
+  }
+  .item.done .check-circle { background: var(--sage-deep); border-color: var(--sage-deep); }
+  .check-circle svg { width: 15px; height: 15px; opacity: 0; transition: opacity 0.1s ease; }
+  .item.done .check-circle svg { opacity: 1; }
+  .item-body h2 { font-size: 18px; color: var(--navy); margin-bottom: 6px; }
+  .item-body p { font-size: 14.5px; color: rgba(54,51,48,0.72); margin-bottom: 10px; }
+  .item-link { font-size: 13.5px; font-weight: 700; color: var(--clay-deep); text-decoration: none; }
+  .item-link:hover { text-decoration: underline; }
+  .item.done .item-body p { color: rgba(54,51,48,0.5); }
+
+  .deletion-note {
+    font-size: 13px; color: rgba(54,51,48,0.55); margin-top: 8px; line-height: 1.5;
+  }
+
+  .all-done {
+    text-align: center; margin-top: 30px; padding: 24px;
+    background: var(--navy); border-radius: 16px; color: var(--cream);
+    display: none;
+  }
+  .all-done.show { display: block; }
+  .all-done h2 { color: var(--cream); font-size: 18px; margin-bottom: 6px; }
+  .all-done p { color: rgba(247,243,236,0.7); font-size: 14px; }
+
+  .invalid-state { text-align: center; padding: 70px 0; }
+  .invalid-state h2 { color: var(--navy); margin-bottom: 12px; }
+  .invalid-state p { color: rgba(54,51,48,0.7); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">
+      <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fadeLeftChecklist" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#2B3A4A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#2B3A4A" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="fiveEighthsClipChecklist">
+            <rect x="0" y="0" width="160" height="56"/>
+          </clipPath>
+        </defs>
+        <g clip-path="url(#fiveEighthsClipChecklist)">
+          <line x1="60" y1="2" x2="60" y2="42" stroke="#2B3A4A" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 60 2 Q 140 32 220 2" stroke="#2B3A4A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftChecklist)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="60" y1="26" x2="220" y2="26" stroke="#2B3A4A" stroke-width="3" stroke-linecap="round"/>
+          <line x1="75" y1="7.1" x2="75" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="90" y1="11.1" x2="90" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="105" y1="14.1" x2="105" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="120" y1="16.1" x2="120" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="135" y1="16.9" x2="135" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="150" y1="16.8" x2="150" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+        </g>
+        <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#2B3A4A">Mission Bridge</text>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div id="checklist-view" style="display: none;">
+    <h1>Welcome home<span id="name-suffix"></span>.</h1>
+    <p class="sub">Three quick things before we wind down this archive. Check them off as you go, in any order, whenever you're ready.</p>
+
+    <div class="item" id="item-photos">
+      <div class="check-circle" onclick="toggleItem('photos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="item-body">
+        <h2>Google Photos are backed up</h2>
+        <p>Confirm Partner Sharing actually captured everything, not just what came through email.</p>
+        <a class="item-link" id="photo-guide-link" href="#" target="_blank">Not done yet? Here's the guide →</a>
+      </div>
+    </div>
+
+    <div class="item" id="item-downloads">
+      <div class="check-circle" onclick="toggleItem('downloads')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="item-body">
+        <h2>Everything you want is downloaded</h2>
+        <p>Every email, photo, and voice memo you want to keep for good has been saved somewhere outside Mission Bridge.</p>
+        <a class="item-link" id="dashboard-link" href="#" target="_blank">Open the dashboard →</a>
+      </div>
+    </div>
+
+    <div class="item" id="item-deletion">
+      <div class="check-circle" onclick="toggleItem('deletion')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="item-body">
+        <h2>Ready for us to close this out</h2>
+        <p>Once you check this, the account is scheduled to be deleted in about 4 months.</p>
+        <div class="deletion-note">Changed your mind, or need more time? Email tyler@getmissionbridge.com anytime before then, no explanation needed.</div>
+      </div>
+    </div>
+
+    <div class="all-done" id="all-done-msg">
+      <h2>All set. Thank you.</h2>
+      <p>Nothing else to do on your end. We'll take it from here.</p>
+    </div>
+  </div>
+
+  <div id="invalid-view" class="invalid-state" style="display: none;">
+    <h2>This link isn't valid</h2>
+    <p>It may have been copied incorrectly. Reach out to tyler@getmissionbridge.com and we'll help you find the right one.</p>
+  </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+let state = null;
+
+async function loadChecklist() {
+  if (!token) {
+    document.getElementById('invalid-view').style.display = 'block';
+    return;
+  }
+  try {
+    const res = await fetch(`https://missionbridge-backend.onrender.com/checklist/${token}`);
+    if (!res.ok) {
+      document.getElementById('invalid-view').style.display = 'block';
+      return;
+    }
+    state = await res.json();
+    render();
+    document.getElementById('checklist-view').style.display = 'block';
+  } catch (err) {
+    document.getElementById('invalid-view').style.display = 'block';
+  }
+}
+
+function render() {
+  document.getElementById('name-suffix').textContent = state.missionaryName ? `, ${state.missionaryName.split(' ')[0]}` : '';
+  document.getElementById('photo-guide-link').href = state.photoGuideUrl;
+  document.getElementById('dashboard-link').href = state.dashboardUrl;
+
+  setItemState('photos', state.checklistPhotosConfirmed);
+  setItemState('downloads', state.checklistDownloadsConfirmed);
+  setItemState('deletion', state.checklistDeletionConfirmed);
+
+  const allDone = state.checklistPhotosConfirmed && state.checklistDownloadsConfirmed && state.checklistDeletionConfirmed;
+  document.getElementById('all-done-msg').classList.toggle('show', allDone);
+}
+
+function setItemState(item, done) {
+  document.getElementById(`item-${item}`).classList.toggle('done', !!done);
+}
+
+async function toggleItem(item) {
+  const keyMap = { photos: 'checklistPhotosConfirmed', downloads: 'checklistDownloadsConfirmed', deletion: 'checklistDeletionConfirmed' };
+  const key = keyMap[item];
+  if (state[key]) return; // already confirmed, one-way checkbox
+
+  setItemState(item, true);
+  try {
+    await fetch(`https://missionbridge-backend.onrender.com/checklist/${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item })
+    });
+    state[key] = true;
+    render();
+  } catch (err) {
+    setItemState(item, false);
+  }
+}
+
+loadChecklist();
+</script>
+
+</body>
+</html>

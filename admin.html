@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Bridge: Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A; --navy-deep: #1D2733; --cream: #F7F3EC; --cream-warm: #F1EADD;
+    --clay: #C8745C; --clay-deep: #B05F49; --charcoal: #363330; --sage: #8A9A8E;
+    --line: rgba(54,51,48,0.12); --green: #4F7A5C; --red: #B0473F;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--charcoal); font-family: 'Source Sans 3', sans-serif; font-size: 15px; line-height: 1.5; }
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 500; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+  /* LOGIN GATE */
+  #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .gate-box { background: var(--navy); padding: 40px; border-radius: 16px; width: 320px; text-align: center; }
+  .gate-box h1 { color: var(--cream); font-size: 22px; margin-bottom: 16px; }
+  .gate-box input {
+    width: 100%; padding: 12px 16px; border-radius: 100px; border: 1px solid rgba(247,243,236,0.2);
+    background: rgba(247,243,236,0.08); color: var(--cream); font-size: 14px; margin-bottom: 12px;
+  }
+  .gate-box button {
+    width: 100%; padding: 12px; border-radius: 100px; border: none; background: var(--clay);
+    color: var(--cream); font-weight: 700; cursor: pointer; font-size: 14px;
+  }
+  .gate-error { color: var(--red); font-size: 13px; margin-top: 10px; min-height: 16px; }
+
+  /* MAIN DASHBOARD */
+  #dashboard { display: none; }
+  header { background: var(--navy); padding: 28px 0; }
+  header h1 { color: var(--cream); font-size: 22px; }
+  .admin-logo { margin-bottom: 12px; }
+  .admin-logo svg { height: 28px; width: auto; }
+  .header-sub { color: rgba(247,243,236,0.5); font-size: 13px; margin-top: 4px; }
+
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;
+    margin: 24px 0;
+  }
+  .stat-card { background: var(--cream-warm); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .stat-card .label { font-size: 12px; color: var(--sage); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-bottom: 6px; }
+  .stat-card .value { font-family: 'Fraunces', serif; font-size: 26px; color: var(--navy); }
+  .stat-card .sub { font-size: 12px; color: var(--sage); margin-top: 4px; }
+
+  .health-row { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .health-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--cream-warm); border: 1px solid var(--line);
+    padding: 8px 14px; border-radius: 100px; font-size: 13px; font-weight: 600;
+  }
+  .health-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .health-dot.error { background: var(--red); }
+
+  .section-title { font-size: 18px; color: var(--navy); margin: 32px 0 14px; }
+  .section-hint { font-size: 13px; color: var(--sage); margin: -8px 0 14px; }
+
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+  th { text-align: left; padding: 10px 14px; background: var(--cream-warm); font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--sage); border-bottom: 1px solid var(--line); }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  tr:last-child td { border-bottom: none; }
+  .name-cell { font-weight: 600; color: var(--navy); }
+  .email-cell { color: var(--sage); font-size: 12.5px; }
+  .view-link { color: var(--clay-deep); font-weight: 600; text-decoration: none; font-size: 13px; }
+  .view-link:hover { text-decoration: underline; }
+  .kick-btn {
+    background: rgba(176,71,63,0.1); color: var(--red); border: 1px solid rgba(176,71,63,0.25);
+    padding: 6px 14px; border-radius: 100px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  }
+  .kick-btn:hover { background: rgba(176,71,63,0.18); }
+  .action-row { display: flex; gap: 5px; flex-wrap: nowrap; white-space: nowrap; }
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(43,58,74,0.06); color: var(--navy); border: 1px solid rgba(43,58,74,0.15);
+    padding: 5px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+    text-decoration: none; line-height: 1;
+  }
+  .icon-btn:hover { background: rgba(43,58,74,0.12); }
+  .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .icon-btn.danger { background: rgba(176,71,63,0.1); color: var(--red); border-color: rgba(176,71,63,0.25); }
+  .icon-btn.danger:hover { background: rgba(176,71,63,0.18); }
+  .icon-btn.restore { background: rgba(79,122,92,0.1); color: var(--green); border-color: rgba(79,122,92,0.25); }
+  .icon-btn.restore:hover { background: rgba(79,122,92,0.18); }
+  .expenditure-form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .expenditure-form input {
+    padding: 9px 14px; border: 1px solid var(--line); border-radius: 100px; font-size: 13.5px;
+    font-family: inherit; background: white;
+  }
+  .expenditure-form input:first-child { flex: 2; min-width: 160px; }
+  .expenditure-form input:nth-child(2) { width: 100px; }
+  .expenditure-form input:nth-child(3) { width: 140px; }
+  .editable { border: 1px solid transparent; background: transparent; font-size: 14px; font-family: inherit; padding: 4px 6px; border-radius: 6px; width: 70px; }
+  .editable:focus { border-color: var(--clay); outline: none; background: var(--cream-warm); }
+  .notes-input { width: 100%; min-width: 100px; }
+
+  .refresh-btn {
+    background: var(--navy); color: var(--cream); border: none; padding: 8px 18px;
+    border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 16px;
+  }
+
+  .empty-row { text-align: center; color: var(--sage); padding: 30px; }
+
+  @media (max-width: 700px) {
+    table, thead, tbody, th, td, tr { display: block; }
+    th { display: none; }
+    tr { background: white; border-radius: 10px; margin-bottom: 12px; padding: 10px; border: 1px solid var(--line); }
+    td { border-bottom: none; padding: 6px 4px; }
+    td::before { content: attr(data-label); font-weight: 700; color: var(--sage); font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <h1>Mission Bridge Admin</h1>
+    <input type="password" id="admin-key-input" placeholder="Admin key" onkeydown="if(event.key==='Enter') checkKey()">
+    <button onclick="checkKey()">Enter</button>
+    <div class="gate-error" id="gate-error"></div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <header>
+    <div class="wrap">
+      <div class="admin-logo">
+        <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="fadeLeftAdmin" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#F7F3EC" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#F7F3EC" stop-opacity="0"/>
+            </linearGradient>
+            <clipPath id="fiveEighthsClipAdmin">
+              <rect x="0" y="0" width="160" height="56"/>
+            </clipPath>
+          </defs>
+          <g clip-path="url(#fiveEighthsClipAdmin)">
+            <line x1="60" y1="2" x2="60" y2="42" stroke="#F7F3EC" stroke-width="5" stroke-linecap="round"/>
+            <path d="M 60 2 Q 140 32 220 2" stroke="#F7F3EC" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftAdmin)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <line x1="60" y1="26" x2="220" y2="26" stroke="#F7F3EC" stroke-width="3" stroke-linecap="round"/>
+            <line x1="75" y1="7.1" x2="75" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+            <line x1="90" y1="11.1" x2="90" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+            <line x1="105" y1="14.1" x2="105" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+            <line x1="120" y1="16.1" x2="120" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+            <line x1="135" y1="16.9" x2="135" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+            <line x1="150" y1="16.8" x2="150" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+          </g>
+          <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#F7F3EC">Mission Bridge</text>
+        </svg>
+      </div>
+      <h1>Mission Bridge Admin Overview</h1>
+      <div class="header-sub" id="last-checked">—</div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="health-row" id="health-row"></div>
+
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <h2 class="section-title">Customers</h2>
+    <button class="refresh-btn" onclick="loadCustomers()">Refresh</button>
+    <div style="overflow-x: auto; border-radius: 12px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Missionary</th>
+          <th>Family Email</th>
+          <th>Phone</th>
+          <th>Expected Return</th>
+          <th>Signed Up</th>
+          <th>Updates</th>
+          <th>Storage</th>
+          <th>Paid</th>
+          <th>Notes</th>
+          <th>⚠️</th>
+          <th style="min-width: 160px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="customers-body">
+        <tr><td colspan="11" class="empty-row">Loading…</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 class="section-title">Expenditures</h2>
+    <div class="expenditure-form">
+      <input type="text" id="exp-description" placeholder="What did you spend on?">
+      <input type="number" id="exp-amount" placeholder="Amount" step="0.01">
+      <input type="text" id="exp-category" placeholder="Category (optional)">
+      <button class="refresh-btn" onclick="addExpenditure()">Add</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="expenditures-body">
+        <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title">Dashboard Activity</h2>
+    <p class="section-hint">Who's actually checking in, and how recently.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Missionary Email</th>
+          <th>Total Views</th>
+          <th>Last Viewed</th>
+        </tr>
+      </thead>
+      <tbody id="activity-body">
+        <tr><td colspan="3" class="empty-row">Loading…</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title">Detected Content Issues</h2>
+    <p class="section-hint">Missionary emails containing links we couldn't save automatically (Drive, Photos, etc).</p>
+    <table>
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Issue Type</th>
+          <th>Mostly Just a Link?</th>
+          <th>Received</th>
+        </tr>
+      </thead>
+      <tbody id="issues-body">
+        <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title">Email Log</h2>
+    <p class="section-hint">
+      Every email we've sent, most recent first.
+      <span id="email-failure-count"></span>
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Recipient</th>
+          <th>Type</th>
+          <th>Subject</th>
+          <th>Status</th>
+          <th>Sent</th>
+        </tr>
+      </thead>
+      <tbody id="email-log-body">
+        <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const BACKEND = 'https://missionbridge-backend.onrender.com';
+let adminKey = '';
+
+function checkKey() {
+  adminKey = document.getElementById('admin-key-input').value;
+  loadOverview(true);
+}
+
+async function loadOverview(isLoginAttempt = false) {
+  try {
+    const res = await fetch(`${BACKEND}/admin/overview?key=${encodeURIComponent(adminKey)}`);
+    if (!res.ok) {
+      if (isLoginAttempt) document.getElementById('gate-error').textContent = 'Incorrect key.';
+      return;
+    }
+    const data = await res.json();
+
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+
+    document.getElementById('last-checked').textContent = 'Last checked: ' + new Date(data.systemHealth.checkedAt).toLocaleString();
+
+    document.getElementById('health-row').innerHTML = `
+      <div class="health-pill"><span class="health-dot ${data.systemHealth.database === 'ok' ? '' : 'error'}"></span>Database: ${data.systemHealth.database}</div>
+      <div class="health-pill"><span class="health-dot"></span>Server: ${data.systemHealth.server}</div>
+    `;
+
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="stat-card"><div class="label">Customers</div><div class="value">${data.totalCustomers}</div></div>
+      <div class="stat-card"><div class="label">Revenue</div><div class="value">$${data.totalRevenue.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="label">Expenditures</div><div class="value">$${data.totalExpenditures.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="label">Net Profit</div><div class="value" style="color: ${data.netProfit >= 0 ? 'var(--green)' : 'var(--red)'}">$${data.netProfit.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="label">Updates Captured</div><div class="value">${data.totalEmailsCaptured}</div></div>
+      <div class="stat-card"><div class="label">Waitlist</div><div class="value">${data.waitlistSignups}</div></div>
+      <div class="stat-card">
+        <div class="label">Storage Used</div>
+        <div class="value">${data.storage.usedGB} GB</div>
+        <div class="sub">${data.storage.percentOfFreeUsed}% of free tier (${data.storage.freeLimitGB}GB)</div>
+      </div>
+    `;
+
+    loadCustomers();
+    loadExpenditures();
+    loadDashboardActivity();
+    loadEmailLog();
+    loadDetectedIssues();
+  } catch (err) {
+    if (isLoginAttempt) document.getElementById('gate-error').textContent = 'Could not connect. Try again.';
+  }
+}
+
+async function loadCustomers() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/customers?key=${encodeURIComponent(adminKey)}`);
+    const customers = await res.json();
+
+    if (customers.length === 0) {
+      document.getElementById('customers-body').innerHTML = `<tr><td colspan="11" class="empty-row">No customers yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('customers-body').innerHTML = customers.map(c => `
+      <tr style="${c.isRemoved ? 'opacity: 0.5;' : ''}">
+        <td data-label="Missionary">
+          <div class="name-cell">${c.missionaryEmail ? (c.missionaryName || '(no name given)') : '⏳ Preorder - no missionary info yet'}</div>
+          <input class="editable email-cell" style="width: 100%; min-width: 160px;" type="email" value="${c.missionaryEmail || ''}" placeholder="no missionary email yet" onchange="updateCustomer(${c.id}, 'missionaryEmail', this.value)">
+        </td>
+        <td data-label="Family Email">
+          <input class="editable" style="width: 100%; min-width: 160px;" type="email" value="${c.familyEmail}" onchange="updateCustomer(${c.id}, 'familyEmail', this.value)">
+        </td>
+        <td data-label="Phone">${c.familyPhone || '—'}</td>
+        <td data-label="Expected Return">
+          ${c.expectedReturnDate ? new Date(c.expectedReturnDate).toLocaleDateString() : '—'}
+          ${c.missionStartDate ? `<div style="font-size:11px;color:var(--sage);">Started ${new Date(c.missionStartDate).toLocaleDateString()}</div>` : `<div style="font-size:11px;color:#B0473F;">⚠️ no start date on file</div>`}
+        </td>
+        <td data-label="Signed Up">${new Date(c.signedUpAt).toLocaleDateString()} (${c.daysSinceSignup}d ago)</td>
+        <td data-label="Updates">${c.totalUpdatesReceived}</td>
+        <td data-label="Storage">${c.storageUsedMB} MB</td>
+        <td data-label="Paid">
+          $<input class="editable" type="number" value="${c.paidAmount}" onchange="updateCustomer(${c.id}, 'paidAmount', this.value)">
+        </td>
+        <td data-label="Notes">
+          <input class="editable notes-input" type="text" value="${c.notes || ''}" placeholder="Add a note…" onchange="updateCustomer(${c.id}, 'notes', this.value)">
+        </td>
+        <td data-label="⚠️" style="text-align: center;">
+          ${c.deletionRequestedAt
+            ? `<span title="Ready to delete, requested ${new Date(c.deletionRequestedAt).toLocaleDateString()}">⚠️</span>`
+            : '—'}
+        </td>
+        <td data-label="Actions">
+          <div class="action-row">
+            ${c.missionaryEmail
+              ? `<a class="icon-btn" href="dashboard.html?email=${encodeURIComponent(c.missionaryEmail)}&adminPreview=1" target="_blank" title="View dashboard (won't count as a real view)">👁</a>
+                 <button class="icon-btn" onclick="resendEmail(${c.id}, 'family')" title="Resend family welcome email">✉️F</button>
+                 <button class="icon-btn" onclick="resendEmail(${c.id}, 'missionary')" title="Resend missionary welcome email">✉️M</button>
+                 <button class="icon-btn" onclick="createPaymentLink(${c.id})" title="Create a Stripe payment link for this customer">💳</button>`
+              : ''}
+            ${c.isRemoved
+              ? `<button class="icon-btn restore" onclick="restoreCustomer(${c.id})" title="Restore">♻️</button>`
+              : `<button class="icon-btn danger" onclick="kickCustomer(${c.id}, '${escapeAttr(c.missionaryName || c.missionaryEmail || c.familyEmail)}')" title="Kick">🚫</button>`}
+            <button class="icon-btn danger" onclick="deleteForever(${c.id}, '${escapeAttr(c.missionaryName || c.missionaryEmail || c.familyEmail)}', '${escapeAttr(c.missionaryEmail || '')}', '${escapeAttr(c.familyEmail || '')}')" title="Delete forever - permanent, cannot be undone">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('customers-body').innerHTML = `<tr><td colspan="11" class="empty-row">Error loading customers.</td></tr>`;
+  }
+}
+
+function escapeAttr(str) {
+  return String(str).replace(/'/g, "\\'");
+}
+
+async function kickCustomer(id, name) {
+  const confirmed = confirm(`Are you sure you want to remove ${name}? Their dashboard will stop working, but their data will be kept safe in case you need to restore them.`);
+  if (!confirmed) return;
+
+  await fetch(`${BACKEND}/admin/customers/${id}/kick`, {
+    method: 'POST',
+    headers: { 'x-admin-key': adminKey }
+  });
+  loadCustomers();
+}
+
+async function restoreCustomer(id) {
+  await fetch(`${BACKEND}/admin/customers/${id}/restore`, {
+    method: 'POST',
+    headers: { 'x-admin-key': adminKey }
+  });
+  loadCustomers();
+}
+
+// Real, permanent deletion - three separate confirmations on
+// purpose, escalating each time, ending in typing the exact email
+// rather than another click-through, since clicking OK three times
+// in a row is easy to do without really reading any of them.
+async function deleteForever(id, name, missionaryEmail, familyEmail) {
+  const step1 = confirm(`Permanently delete ${name}?\n\nThis is different from "Kick" - this erases everything for good: their emails, photos, voice memos, and all records. There is no undo.`);
+  if (!step1) return;
+
+  const step2 = confirm(`Really sure? Every file in their archive gets deleted from storage too, not just hidden. This cannot be recovered afterward, not even by asking me.`);
+  if (!step2) return;
+
+  const confirmTarget = missionaryEmail || familyEmail;
+  const typed = prompt(`Last step. Type this exact email address to confirm permanent deletion:\n\n${confirmTarget}`);
+  if (!typed || typed.trim().toLowerCase() !== confirmTarget.toLowerCase()) {
+    alert('That did not match exactly - nothing was deleted.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND}/admin/customers/${id}/delete-forever`, {
+      method: 'POST',
+      headers: { 'x-admin-key': adminKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ confirmEmail: typed.trim() })
+    });
+    if (res.ok) {
+      alert('Deleted permanently.');
+      loadCustomers();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || 'Something went wrong, nothing was deleted.');
+    }
+  } catch (err) {
+    alert('Something went wrong, nothing was deleted.');
+  }
+}
+
+async function resendEmail(id, target) {
+  const btn = event.target;
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Sending...';
+
+  try {
+    const res = await fetch(`${BACKEND}/admin/customers/${id}/resend`, {
+      method: 'POST',
+      headers: { 'x-admin-key': adminKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target })
+    });
+    if (res.ok) {
+      btn.textContent = 'Sent!';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      btn.textContent = 'Failed';
+      alert(data.error || 'Something went wrong sending that email.');
+    }
+  } catch (err) {
+    btn.textContent = 'Failed';
+  }
+
+  setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 2500);
+}
+
+async function createPaymentLink(id) {
+  const amount = prompt('Amount to charge (dollars), e.g. 50 or 75:');
+  if (!amount) return;
+  const num = parseFloat(amount);
+  if (isNaN(num) || num <= 0) {
+    alert('Please enter a valid dollar amount.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND}/admin/customers/${id}/create-payment-link`, {
+      method: 'POST',
+      headers: { 'x-admin-key': adminKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: num })
+    });
+    const data = await res.json();
+    if (res.ok && data.url) {
+      await navigator.clipboard.writeText(data.url).catch(() => {});
+      prompt('Payment link created and copied to clipboard. Send this to the customer:', data.url);
+    } else {
+      alert(data.error || 'Something went wrong creating the payment link.');
+    }
+  } catch (err) {
+    alert('Something went wrong creating the payment link.');
+  }
+}
+
+async function loadExpenditures() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/expenditures?key=${encodeURIComponent(adminKey)}`);
+    const data = await res.json();
+
+    if (data.expenditures.length === 0) {
+      document.getElementById('expenditures-body').innerHTML = `<tr><td colspan="5" class="empty-row">No expenditures logged yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('expenditures-body').innerHTML = data.expenditures.map(e => `
+      <tr>
+        <td data-label="Description">${e.description}</td>
+        <td data-label="Category">${e.category || '—'}</td>
+        <td data-label="Amount">$${parseFloat(e.amount).toFixed(2)}</td>
+        <td data-label="Date">${new Date(e.spent_at).toLocaleDateString()}</td>
+        <td><button class="kick-btn" onclick="deleteExpenditure(${e.id})">Remove</button></td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('expenditures-body').innerHTML = `<tr><td colspan="5" class="empty-row">Error loading expenditures.</td></tr>`;
+  }
+}
+
+async function addExpenditure() {
+  const description = document.getElementById('exp-description').value.trim();
+  const amount = document.getElementById('exp-amount').value;
+  const category = document.getElementById('exp-category').value.trim();
+
+  if (!description || !amount) {
+    alert('Please enter a description and amount.');
+    return;
+  }
+
+  await fetch(`${BACKEND}/admin/expenditures`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+    body: JSON.stringify({ description, amount: parseFloat(amount), category })
+  });
+
+  document.getElementById('exp-description').value = '';
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-category').value = '';
+
+  loadExpenditures();
+  loadOverview();
+}
+
+async function deleteExpenditure(id) {
+  const confirmed = confirm('Remove this expenditure record?');
+  if (!confirmed) return;
+
+  await fetch(`${BACKEND}/admin/expenditures/${id}`, {
+    method: 'DELETE',
+    headers: { 'x-admin-key': adminKey }
+  });
+  loadExpenditures();
+  loadOverview();
+}
+
+async function updateCustomer(id, field, value) {
+  const body = {};
+  body[field] = field === 'paidAmount' ? parseFloat(value) : value;
+
+  await fetch(`${BACKEND}/admin/customers/${id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+    body: JSON.stringify(body)
+  });
+}
+
+async function loadDashboardActivity() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/dashboard-activity?key=${encodeURIComponent(adminKey)}`);
+    const activity = await res.json();
+
+    if (activity.length === 0) {
+      document.getElementById('activity-body').innerHTML = `<tr><td colspan="3" class="empty-row">No dashboard views yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('activity-body').innerHTML = activity.map(a => `
+      <tr>
+        <td data-label="Missionary Email">${a.missionary_email}</td>
+        <td data-label="Total Views">${a.total_views}</td>
+        <td data-label="Last Viewed">${new Date(a.last_viewed).toLocaleString()}</td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('activity-body').innerHTML = `<tr><td colspan="3" class="empty-row">Error loading activity.</td></tr>`;
+  }
+}
+
+const issueTypeLabels = {
+  drive_file_link: 'Drive file link',
+  photos_album_link: 'Photos album link',
+  drive_and_photos_link: 'Drive + Photos links',
+};
+
+async function loadDetectedIssues() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/detected-issues?key=${encodeURIComponent(adminKey)}`);
+    const issues = await res.json();
+
+    if (issues.length === 0) {
+      document.getElementById('issues-body').innerHTML = `<tr><td colspan="5" class="empty-row">No issues detected yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('issues-body').innerHTML = issues.map(i => `
+      <tr>
+        <td data-label="From">${i.from_address}</td>
+        <td data-label="Subject">${i.subject || '—'}</td>
+        <td data-label="Issue Type">${issueTypeLabels[i.detected_issue_type] || i.detected_issue_type}</td>
+        <td data-label="Mostly Just a Link?">${i.is_mostly_link ? 'Yes' : 'No'}</td>
+        <td data-label="Received">${new Date(i.received_at).toLocaleString()}</td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('issues-body').innerHTML = `<tr><td colspan="5" class="empty-row">Error loading issues.</td></tr>`;
+  }
+}
+
+async function loadEmailLog() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/email-log?key=${encodeURIComponent(adminKey)}`);
+    const data = await res.json();
+
+    const failureSpan = document.getElementById('email-failure-count');
+    if (data.totalFailures > 0) {
+      failureSpan.textContent = ` ⚠️ ${data.totalFailures} failed send(s) all-time.`;
+      failureSpan.style.color = 'var(--red)';
+    } else {
+      failureSpan.textContent = ' No failures so far.';
+    }
+
+    if (data.emails.length === 0) {
+      document.getElementById('email-log-body').innerHTML = `<tr><td colspan="5" class="empty-row">No emails sent yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('email-log-body').innerHTML = data.emails.map(e => `
+      <tr>
+        <td data-label="Recipient">${e.recipient}</td>
+        <td data-label="Type">${e.email_type}</td>
+        <td data-label="Subject">${e.subject || '—'}</td>
+        <td data-label="Status">${renderDeliveryStatus(e)}${renderEngagement(e)}</td>
+        <td data-label="Sent">${new Date(e.sent_at).toLocaleString()}</td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('email-log-body').innerHTML = `<tr><td colspan="5" class="empty-row">Error loading email log.</td></tr>`;
+  }
+}
+
+// "success" only means SendGrid accepted the send request. The real
+// outcome (delivered vs bounced) arrives later via webhook and lives
+// in delivery_status - this renders whichever is the most accurate
+// thing we currently know.
+function renderDeliveryStatus(e) {
+  if (!e.success) {
+    return `<span style="color: var(--red); font-weight: 600;" title="${escapeAttr(e.error_message || '')}">Failed to send</span>`;
+  }
+  const statusMap = {
+    bounce: { label: 'Bounced', color: 'var(--red)' },
+    dropped: { label: 'Dropped', color: 'var(--red)' },
+    blocked: { label: 'Blocked', color: 'var(--red)' },
+    deferred: { label: 'Deferred (retrying)', color: '#B8860B' },
+    delivered: { label: 'Delivered', color: 'var(--green)' },
+    sent: { label: 'Sent (awaiting confirmation)', color: '#888' },
+  };
+  const info = statusMap[e.delivery_status] || statusMap.sent;
+  return `<span style="color: ${info.color}; font-weight: 600;" title="${escapeAttr(e.delivery_detail || '')}">${info.label}</span>`;
+}
+
+function renderEngagement(e) {
+  const parts = [];
+  if (e.click_confirmed_at) parts.push(`<span title="Confirmed 'got this' ${new Date(e.click_confirmed_at).toLocaleString()}" style="margin-left: 6px;">✅</span>`);
+  else if (e.opened_at) parts.push(`<span title="Opened ${new Date(e.opened_at).toLocaleString()}" style="margin-left: 6px;">👀</span>`);
+  if (e.clicked_at) parts.push(`<span title="Clicked ${new Date(e.clicked_at).toLocaleString()}" style="margin-left: 4px;">🔗</span>`);
+  return parts.join('');
+}
+</script>
+
+</body>
+</html>

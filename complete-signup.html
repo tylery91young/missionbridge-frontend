@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finish setting up - Mission Bridge</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A; --navy-deep: #1D2733; --cream: #F7F3EC; --cream-warm: #F1EADD;
+    --clay: #C8745C; --clay-deep: #B05F49; --charcoal: #363330; --sage: #8A9A8E; --line: rgba(54,51,48,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--charcoal); font-family: 'Source Sans 3', sans-serif; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 500; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 28px; }
+  nav { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .logo svg { height: 34px; width: auto; }
+
+  main { padding: 56px 0 80px; }
+  h1 { color: var(--navy); font-size: clamp(26px, 4vw, 34px); margin-bottom: 12px; }
+  .sub { color: rgba(54,51,48,0.72); font-size: 16px; margin-bottom: 34px; max-width: 440px; }
+
+  .card { background: var(--navy); border-radius: 20px; padding: 34px 30px; }
+  form { display: flex; flex-direction: column; gap: 12px; }
+  input {
+    width: 100%; padding: 15px 18px; border-radius: 100px;
+    border: 1px solid rgba(247,243,236,0.2); background: rgba(247,243,236,0.08);
+    color: var(--cream); font-size: 15px; font-family: 'Source Sans 3', sans-serif;
+  }
+  input::placeholder { color: rgba(247,243,236,0.45); }
+  input:focus { outline: 2px solid var(--clay); outline-offset: 2px; }
+  input[type="date"] { color-scheme: dark; }
+  .date-label { color: rgba(247,243,236,0.65); font-size: 13px; padding-left: 4px; margin-top: 4px; }
+  button {
+    background: var(--clay); color: var(--cream); border: none;
+    padding: 16px 28px; border-radius: 100px; font-weight: 700; font-size: 15.5px;
+    cursor: pointer; transition: background 0.2s ease; margin-top: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  button:hover { background: var(--clay-deep); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  .form-msg { color: rgba(247,243,236,0.75); font-size: 14px; margin-top: 16px; min-height: 18px; line-height: 1.5; }
+
+  .invalid-state { text-align: center; padding: 70px 0; }
+  .invalid-state h2 { color: var(--navy); margin-bottom: 12px; }
+  .invalid-state p { color: rgba(54,51,48,0.7); margin-bottom: 22px; }
+  .invalid-state a { display: inline-block; background: var(--clay); color: var(--cream); text-decoration: none; padding: 14px 26px; border-radius: 100px; font-weight: 700; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">
+      <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fadeLeftComplete" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#2B3A4A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#2B3A4A" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="fiveEighthsClipComplete">
+            <rect x="0" y="0" width="160" height="56"/>
+          </clipPath>
+        </defs>
+        <g clip-path="url(#fiveEighthsClipComplete)">
+          <line x1="60" y1="2" x2="60" y2="42" stroke="#2B3A4A" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 60 2 Q 140 32 220 2" stroke="#2B3A4A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftComplete)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="60" y1="26" x2="220" y2="26" stroke="#2B3A4A" stroke-width="3" stroke-linecap="round"/>
+          <line x1="75" y1="7.1" x2="75" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="90" y1="11.1" x2="90" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="105" y1="14.1" x2="105" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="120" y1="16.1" x2="120" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="135" y1="16.9" x2="135" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="150" y1="16.8" x2="150" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+        </g>
+        <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#2B3A4A">Mission Bridge</text>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div id="complete-view" style="display: none;">
+    <h1>Almost there.</h1>
+    <p class="sub">Add your missionary's info below and we'll get everything set up — takes about a minute.</p>
+
+    <div class="card">
+      <form id="complete-form" onsubmit="handleComplete(event)">
+        <input type="text" id="missionary-name" placeholder="Missionary's name (optional)">
+        <input type="email" id="missionary-email" placeholder="Missionary's email address" required>
+        <input type="email" id="missionary-email-confirm" placeholder="Confirm missionary's email address" required>
+        <label class="date-label" for="mission-start-date">Roughly when they left (doesn't need to be exact)</label>
+        <input type="date" id="mission-start-date">
+        <label class="date-label" for="expected-return-date">Roughly when their mission ends</label>
+        <input type="date" id="expected-return-date">
+        <button type="submit" id="complete-submit-btn">Finish setup</button>
+      </form>
+      <div class="form-msg" id="form-msg"></div>
+    </div>
+  </div>
+
+  <div id="invalid-view" class="invalid-state" style="display: none;">
+    <h2>This link isn't valid anymore</h2>
+    <p>It may have already been used, or the link was copied incorrectly. Reach out to tyler@getmissionbridge.com and we'll get you sorted.</p>
+    <a href="index.html">Back to Mission Bridge</a>
+  </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+
+if (!token) {
+  document.getElementById('invalid-view').style.display = 'block';
+} else {
+  document.getElementById('complete-view').style.display = 'block';
+}
+
+async function handleComplete(e) {
+  e.preventDefault();
+
+  const missionaryName = document.getElementById('missionary-name').value.trim();
+  const missionaryEmail = document.getElementById('missionary-email').value.trim().toLowerCase();
+  const missionaryEmailConfirm = document.getElementById('missionary-email-confirm').value.trim().toLowerCase();
+  const missionStartDate = document.getElementById('mission-start-date').value;
+  const expectedReturnDate = document.getElementById('expected-return-date').value;
+  const msg = document.getElementById('form-msg');
+  const button = document.getElementById('complete-submit-btn');
+
+  if (missionaryEmail !== missionaryEmailConfirm) {
+    msg.textContent = "Those missionary email addresses don't match. Please double check and try again.";
+    msg.style.color = '#C8745C';
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Setting up...';
+  msg.style.color = '';
+
+  try {
+    const response = await fetch('https://missionbridge-backend.onrender.com/signup/complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token, missionaryEmail, missionaryName, expectedReturnDate, missionStartDate,
+        missionStatus: 'serving'
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+      const p = new URLSearchParams({ email: missionaryEmail });
+      if (missionaryName) p.set('name', missionaryName);
+      window.location.href = `welcome.html?${p.toString()}`;
+      return;
+    } else if (response.status === 404) {
+      document.getElementById('complete-view').style.display = 'none';
+      document.getElementById('invalid-view').style.display = 'block';
+      return;
+    } else {
+      msg.textContent = "Something went wrong. Please try again.";
+      msg.style.color = '#C8745C';
+    }
+  } catch (err) {
+    msg.textContent = "Something went wrong. Please try again.";
+    msg.style.color = '#C8745C';
+  }
+
+  button.disabled = false;
+  button.textContent = 'Finish setup';
+}
+</script>
+
+</body>
+</html>

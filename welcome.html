@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're all set - Mission Bridge</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A;
+    --navy-deep: #1D2733;
+    --cream: #F7F3EC;
+    --cream-warm: #F1EADD;
+    --clay: #C8745C;
+    --clay-deep: #B05F49;
+    --charcoal: #363330;
+    --sage: #8A9A8E;
+    --sage-deep: #6E7E72;
+    --line: rgba(54,51,48,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -0.01em; }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 28px; }
+
+  nav {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; }
+  .logo svg { height: 34px; width: auto; }
+
+  /* ---------- HERO / CONFIRMATION ---------- */
+  .confirm-hero {
+    padding: 64px 0 40px;
+    text-align: center;
+  }
+  .check-badge {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 26px;
+  }
+  .check-badge svg { width: 24px; height: 24px; }
+  h1.confirm-head {
+    font-size: clamp(30px, 4.4vw, 42px);
+    color: var(--navy);
+    margin-bottom: 14px;
+    line-height: 1.12;
+  }
+  .confirm-sub {
+    font-size: 18px;
+    color: rgba(54,51,48,0.75);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .confirm-sub strong { color: var(--charcoal); }
+
+  /* ---------- STEPS ---------- */
+  .steps {
+    padding: 8px 0 8px;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 20px;
+    padding: 28px 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: none; }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    color: var(--clay-deep);
+    line-height: 1.4;
+  }
+  .step h3 {
+    font-size: 19px;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .step p {
+    color: rgba(54,51,48,0.78);
+    font-size: 15.5px;
+    max-width: 480px;
+  }
+  .copy-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--cream-warm);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 12px 0;
+    max-width: 420px;
+    font-size: 14.5px;
+  }
+  .copy-box span { flex: 1; word-break: break-all; font-weight: 600; color: var(--navy); }
+  .copy-box button {
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+  }
+  .copy-box button:hover { background: var(--navy-deep); }
+
+  /* ---------- DASHBOARD EXPLAINER (signature element) ---------- */
+  .dash-explainer {
+    background: var(--navy);
+    border-radius: 20px;
+    padding: 32px 30px;
+    margin: 4px 0 0;
+  }
+  .dash-explainer-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .dash-explainer h3 { color: var(--cream); font-size: 19px; }
+  .dash-tag {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+    color: rgba(247,243,236,0.5);
+  }
+  .dash-mock {
+    background: rgba(247,243,236,0.06);
+    border: 1px solid rgba(247,243,236,0.12);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+  .dash-mock-bar { display: flex; gap: 6px; margin-bottom: 14px; }
+  .dash-mock-bar span { width: 7px; height: 7px; border-radius: 50%; background: rgba(247,243,236,0.2); }
+  .dash-mock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .dash-mock-card {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: rgba(247,243,236,0.08);
+    border: 1px solid rgba(247,243,236,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .dash-mock-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(200,116,92,0.4), rgba(138,154,142,0.25));
+  }
+  .dash-mock-card.line {
+    display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 10px;
+  }
+  .dash-mock-card.line::after { display: none; }
+  .dash-mock-card.line span { display: block; height: 5px; border-radius: 3px; background: rgba(247,243,236,0.18); }
+  .dash-mock-card.line span:nth-child(2) { width: 70%; }
+  .dash-explainer p {
+    color: rgba(247,243,236,0.75);
+    font-size: 15px;
+    max-width: 460px;
+  }
+  .dash-explainer p strong { color: var(--cream); }
+
+  .dash-cta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+    margin-top: 22px;
+  }
+  .btn-primary {
+    background: var(--clay);
+    color: var(--cream);
+    border: none;
+    padding: 15px 28px;
+    border-radius: 100px;
+    font-size: 15.5px;
+    font-weight: 700;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--clay-deep); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: rgba(247,243,236,0.7);
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* ---------- SECURITY NOTE ---------- */
+  .security-note {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--cream-warm);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 28px;
+  }
+  .security-note svg { flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px; color: var(--sage-deep); }
+  .security-note p { font-size: 14.5px; color: rgba(54,51,48,0.8); }
+  .security-note strong { color: var(--charcoal); }
+
+  /* ---------- FOOTER HELP ---------- */
+  .help-line {
+    text-align: center;
+    padding: 40px 0 60px;
+    font-size: 14.5px;
+    color: rgba(54,51,48,0.6);
+  }
+  .help-line a { color: var(--clay-deep); font-weight: 600; text-decoration: none; }
+  .help-line a:hover { text-decoration: underline; }
+
+  .missing-state {
+    text-align: center;
+    padding: 90px 0;
+  }
+  .missing-state h2 { color: var(--navy); margin-bottom: 12px; }
+  .missing-state p { color: rgba(54,51,48,0.7); margin-bottom: 22px; }
+
+  @media (max-width: 640px) {
+    .step { grid-template-columns: 28px 1fr; gap: 14px; }
+    .dash-explainer { padding: 26px 20px; }
+  }
+
+  button:focus-visible, a:focus-visible {
+    outline: 2px solid var(--clay-deep);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">
+      <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fadeLeftNav" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#2B3A4A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#2B3A4A" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="fiveEighthsClipNav">
+            <rect x="0" y="0" width="160" height="56"/>
+          </clipPath>
+        </defs>
+        <g clip-path="url(#fiveEighthsClipNav)">
+          <line x1="60" y1="2" x2="60" y2="42" stroke="#2B3A4A" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 60 2 Q 140 32 220 2" stroke="#2B3A4A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftNav)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="60" y1="26" x2="220" y2="26" stroke="#2B3A4A" stroke-width="3" stroke-linecap="round"/>
+          <line x1="75" y1="7.1" x2="75" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="90" y1="11.1" x2="90" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="105" y1="14.1" x2="105" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="120" y1="16.1" x2="120" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="135" y1="16.9" x2="135" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="150" y1="16.8" x2="150" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+        </g>
+        <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#2B3A4A">Mission Bridge</text>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<div id="confirm-view" style="display: none;">
+  <header class="confirm-hero">
+    <div class="wrap">
+      <div class="check-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F7F3EC" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h1 class="confirm-head">You're all set.</h1>
+      <p class="confirm-sub" id="confirm-sub">Everything <strong id="missionary-name-slot">your missionary</strong> sends home from now on will be saved automatically.</p>
+    </div>
+  </header>
+
+  <section class="wrap">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Give this address to your missionary</h3>
+          <div class="copy-box">
+            <span id="archive-email">archive@parse.getmissionbridge.com</span>
+            <button onclick="copyText('archive@parse.getmissionbridge.com', this)">Copy</button>
+          </div>
+          <p>Have them add it to their regular email list, the same way they'd add anyone else they send updates to. We've also sent them a short email with these same instructions.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>It saves itself from there</h3>
+          <p>No uploading, no app, nothing to manage. Every email, photo, and voice memo they send lands in your archive the moment they hit send.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Your dashboard is where you go to look</h3>
+          <p>This is a viewing page, not a workspace. Whatever your missionary has already sent shows up here, organized by date, ready to read, view, or listen to. You'll come back to it, not manage it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-explainer">
+      <div class="dash-explainer-head">
+        <h3>What your dashboard actually is</h3>
+        <span class="dash-tag">Already filling in</span>
+      </div>
+      <div class="dash-mock">
+        <div class="dash-mock-bar"><span></span><span></span><span></span></div>
+        <div class="dash-mock-grid">
+          <div class="dash-mock-card"></div>
+          <div class="dash-mock-card line"><span></span><span></span></div>
+          <div class="dash-mock-card"></div>
+          <div class="dash-mock-card line"><span></span><span></span></div>
+          <div class="dash-mock-card"></div>
+          <div class="dash-mock-card"></div>
+        </div>
+      </div>
+      <p>Think of it like a photo album that fills itself in. There's nothing to upload and nothing to set up here, it already holds whatever's come in so far, and it updates on its own every time your missionary sends more.</p>
+      <div class="dash-cta">
+        <a class="btn-primary" id="dashboard-link" href="#" target="_blank">Open my dashboard &rarr;</a>
+        <button class="btn-ghost" onclick="copyDashboardLink(this)">Copy link</button>
+      </div>
+    </div>
+
+    <div class="security-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      <p><strong>There's no password.</strong> This exact link is the only way anyone sees this dashboard, so bookmark it somewhere you'll remember and only share it with people you trust.</p>
+    </div>
+
+    <div class="help-line">
+      Lost your link, an update didn't show up, or something looks off?
+      <a href="mailto:tyler@getmissionbridge.com">Email tyler@getmissionbridge.com</a> anytime.
+    </div>
+  </section>
+</div>
+
+<div id="missing-view" class="missing-state" style="display: none;">
+  <div class="wrap">
+    <h2>We couldn't find your signup</h2>
+    <p>This page needs a link from the signup confirmation. Head back and try signing up again.</p>
+    <a class="btn-primary" href="index.html">Back to Mission Bridge</a>
+  </div>
+</div>
+
+<script>
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+}
+
+function copyDashboardLink(btn) {
+  const url = document.getElementById('dashboard-link').href;
+  navigator.clipboard.writeText(url).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+}
+
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const missionaryEmail = params.get('email');
+  const missionaryName = params.get('name');
+
+  if (!missionaryEmail) {
+    document.getElementById('missing-view').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('confirm-view').style.display = 'block';
+
+  const dashboardUrl = `dashboard.html?email=${encodeURIComponent(missionaryEmail)}`;
+  document.getElementById('dashboard-link').href = dashboardUrl;
+
+  if (missionaryName) {
+    document.getElementById('missionary-name-slot').textContent = missionaryName;
+  }
+})();
+</script>
+
+</body>
+</html>

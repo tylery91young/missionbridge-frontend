@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Bridge: Find Your Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A; --cream: #F7F3EC; --cream-warm: #F1EADD;
+    --clay: #C8745C; --clay-deep: #B05F49; --charcoal: #363330; --sage: #8A9A8E; --line: rgba(54,51,48,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--cream); color: var(--charcoal); font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px; line-height: 1.6; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  h1 { font-family: 'Fraunces', serif; font-weight: 500; color: var(--navy); }
+  .box {
+    background: var(--navy); border-radius: 20px; padding: 40px 36px;
+    max-width: 420px; width: 100%; margin: 24px; text-align: center;
+  }
+  .box h1 { color: var(--cream); font-size: 24px; margin-bottom: 10px; }
+  .box p { color: rgba(247,243,236,0.7); font-size: 14.5px; margin-bottom: 24px; }
+  input {
+    width: 100%; padding: 13px 18px; border-radius: 100px;
+    border: 1px solid rgba(247,243,236,0.2); background: rgba(247,243,236,0.08);
+    color: var(--cream); font-size: 14.5px; margin-bottom: 12px; font-family: inherit;
+  }
+  input::placeholder { color: rgba(247,243,236,0.4); }
+  button {
+    width: 100%; padding: 13px; border-radius: 100px; border: none;
+    background: var(--clay); color: var(--cream); font-weight: 700;
+    font-size: 14.5px; cursor: pointer;
+  }
+  button:hover { background: var(--clay-deep); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  .result { margin-top: 20px; text-align: left; }
+  .match-card {
+    background: rgba(247,243,236,0.08); border: 1px solid rgba(247,243,236,0.15);
+    border-radius: 12px; padding: 16px; margin-bottom: 10px;
+  }
+  .match-card .name { color: var(--cream); font-weight: 600; margin-bottom: 8px; }
+  .match-card a {
+    color: var(--clay); font-weight: 700; font-size: 14px; text-decoration: none;
+  }
+  .match-card a:hover { text-decoration: underline; }
+  .error-msg { color: #E0958A; font-size: 13.5px; margin-top: 14px; }
+  .success-msg { color: rgba(247,243,236,0.85); font-size: 14px; margin-top: 16px; line-height: 1.6; }
+  .back-link { display: block; margin-top: 20px; color: rgba(247,243,236,0.5); font-size: 13px; text-decoration: none; }
+  .back-link:hover { color: var(--cream); }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg" style="height: 26px; width: auto; margin-bottom: 18px;">
+    <defs>
+      <linearGradient id="fadeLeftFind" x1="100%" y1="0%" x2="0%" y2="0%">
+        <stop offset="0%" stop-color="#F7F3EC" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#F7F3EC" stop-opacity="0"/>
+      </linearGradient>
+      <clipPath id="fiveEighthsClipFind">
+        <rect x="0" y="0" width="160" height="56"/>
+      </clipPath>
+    </defs>
+    <g clip-path="url(#fiveEighthsClipFind)">
+      <line x1="60" y1="2" x2="60" y2="42" stroke="#F7F3EC" stroke-width="5" stroke-linecap="round"/>
+      <path d="M 60 2 Q 140 32 220 2" stroke="#F7F3EC" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftFind)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <line x1="60" y1="26" x2="220" y2="26" stroke="#F7F3EC" stroke-width="3" stroke-linecap="round"/>
+      <line x1="75" y1="7.1" x2="75" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+      <line x1="90" y1="11.1" x2="90" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+      <line x1="105" y1="14.1" x2="105" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+      <line x1="120" y1="16.1" x2="120" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+      <line x1="135" y1="16.9" x2="135" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+      <line x1="150" y1="16.8" x2="150" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
+    </g>
+    <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#F7F3EC">Mission Bridge</text>
+  </svg>
+  <h1>Find Your Dashboard</h1>
+  <p>Enter the email you signed up with (either your missionary's email or your own) and we'll email you the link.</p>
+
+  <input type="email" id="search-email" placeholder="Enter an email address" onkeydown="if(event.key==='Enter') findDashboard()">
+  <button onclick="findDashboard()" id="search-btn">Find my dashboard</button>
+
+  <div class="result" id="result"></div>
+
+  <a href="index.html" class="back-link">← Back to homepage</a>
+</div>
+
+<script>
+const BACKEND = 'https://missionbridge-backend.onrender.com';
+
+async function findDashboard() {
+  const email = document.getElementById('search-email').value.trim();
+  const result = document.getElementById('result');
+  const btn = document.getElementById('search-btn');
+
+  if (!email) {
+    result.innerHTML = '<div class="error-msg">Please enter an email address.</div>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Searching...';
+  result.innerHTML = '';
+
+  try {
+    const res = await fetch(`${BACKEND}/find-dashboard`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    result.innerHTML = `<div class="success-msg">${data.message}</div>`;
+  } catch (err) {
+    result.innerHTML = '<div class="error-msg">Something went wrong. Please try again.</div>';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Find my dashboard';
+}
+</script>
+
+</body>
+</html>
