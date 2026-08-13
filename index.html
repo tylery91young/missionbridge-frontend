@@ -569,19 +569,38 @@
       <div class="archive-panel" id="archive-panel">
         <div class="bridge-graphic" aria-hidden="true">
           <svg class="bridge-path-svg" viewBox="0 0 360 92" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <symbol id="travelMail" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" fill="#B8874A"/>
+                <rect x="5" y="6.5" width="10" height="7.4" rx="1" fill="none" stroke="#FFFFFF" stroke-width="1.3"/>
+                <path d="M5 7.2l5 3.6 5-3.6" fill="none" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </symbol>
+              <symbol id="travelCamera" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" fill="#2B3A4A"/>
+                <path d="M5.2 7.6h2.1l1.1-1.6h3.2l1.1 1.6h2.1a.8.8 0 0 1 .8.8v5.4a.8.8 0 0 1-.8.8H5.2a.8.8 0 0 1-.8-.8V8.4a.8.8 0 0 1 .8-.8z" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round"/>
+                <circle cx="10" cy="10.8" r="2.1" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+              </symbol>
+              <symbol id="travelMic" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" fill="#B8874A"/>
+                <rect x="8.3" y="4.2" width="3.4" height="6.6" rx="1.7" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+                <path d="M6 10.4a4 4 0 0 0 8 0" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
+                <line x1="10" y1="14.4" x2="10" y2="16" stroke="#FFFFFF" stroke-width="1.2"/>
+                <line x1="8" y1="16" x2="12" y2="16" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round"/>
+              </symbol>
+            </defs>
             <path d="M40,68 Q180,16 320,68" fill="none" stroke="#E6E9ED" stroke-width="2"/>
-            <circle class="motion-dot" r="4" fill="#B8874A">
+            <use class="motion-dot" href="#travelMail" x="-8" y="-8" width="16" height="16">
               <animateMotion dur="3.6s" repeatCount="indefinite" begin="0s" path="M40,68 Q180,16 320,68"/>
               <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="3.6s" repeatCount="indefinite" begin="0s"/>
-            </circle>
-            <circle class="motion-dot" r="4" fill="#2B3A4A">
-              <animateMotion dur="3.6s" repeatCount="indefinite" begin="1.2s" path="M40,68 Q180,16 320,68"/>
-              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="3.6s" repeatCount="indefinite" begin="1.2s"/>
-            </circle>
-            <circle class="motion-dot" r="4" fill="#B8874A">
-              <animateMotion dur="3.6s" repeatCount="indefinite" begin="2.4s" path="M40,68 Q180,16 320,68"/>
-              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="3.6s" repeatCount="indefinite" begin="2.4s"/>
-            </circle>
+            </use>
+            <use class="motion-dot" href="#travelCamera" x="-8" y="-8" width="16" height="16">
+              <animateMotion dur="4.1s" repeatCount="indefinite" begin="1.1s" path="M40,68 Q180,16 320,68"/>
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="4.1s" repeatCount="indefinite" begin="1.1s"/>
+            </use>
+            <use class="motion-dot" href="#travelMic" x="-8" y="-8" width="16" height="16">
+              <animateMotion dur="4.7s" repeatCount="indefinite" begin="2.2s" path="M40,68 Q180,16 320,68"/>
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="4.7s" repeatCount="indefinite" begin="2.2s"/>
+            </use>
           </svg>
           <div class="bridge-node bridge-node-left">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
