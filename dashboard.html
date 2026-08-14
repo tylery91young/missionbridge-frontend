@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission Bridge: Dashboard</title>
+<title>Dashboard — Mission Bridge Archive</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --navy: #2B3A4A;
     --navy-deep: #1D2733;
-    --cream: #F7F3EC;
-    --cream-warm: #F1EADD;
-    --clay: #C8745C;
-    --clay-deep: #B05F49;
-    --charcoal: #363330;
-    --sage: #8A9A8E;
-    --line: rgba(54,51,48,0.12);
+    --cream: #FFFFFF;
+    --cream-warm: #F7F8FA;
+    --clay: #B8874A;
+    --clay-deep: #96703A;
+    --charcoal: #171B21;
+    --sage: #8A93A1;
+    --line: rgba(23,27,33,0.10);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,13 +26,13 @@
   body {
     background: var(--cream);
     color: var(--charcoal);
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 16px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; }
+  h1, h2, h3 { font-family: 'Inter', sans-serif; font-weight: 600; }
 
   .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
 
@@ -55,7 +55,7 @@
   }
   .stats-row { display: flex; gap: 28px; flex-wrap: wrap; }
   .stat { color: rgba(247,243,236,0.85); }
-  .stat strong { display: block; font-family: 'Fraunces', serif; font-size: 24px; color: var(--cream); }
+  .stat strong { display: block; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 24px; color: var(--cream); }
   .stat span { font-size: 12.5px; color: rgba(247,243,236,0.5); text-transform: uppercase; letter-spacing: 0.04em; }
 
   .link-security-note {
@@ -87,7 +87,7 @@
     border-radius: 100px;
     font-size: 13.5px;
     font-weight: 600;
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
     transition: background 0.2s ease;
     text-decoration: none;
@@ -112,7 +112,7 @@
     border-radius: 100px;
     font-size: 13.5px;
     font-weight: 600;
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
     transition: all 0.15s ease;
   }
@@ -270,7 +270,7 @@
     background: var(--clay); color: var(--cream);
     border: none; padding: 10px 18px; border-radius: 100px;
     font-size: 14px; font-weight: 600; text-decoration: none;
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   .loading { text-align: center; padding: 100px 24px; color: var(--sage); }
@@ -320,7 +320,8 @@
               <line x1="135" y1="16.9" x2="135" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
               <line x1="150" y1="16.8" x2="150" y2="26" stroke="#F7F3EC" stroke-width="1.4"/>
             </g>
-            <text x="172" y="26" font-family="Georgia, serif" font-weight="600" font-size="26" fill="#F7F3EC">Mission Bridge</text>
+            <text x="172" y="22" font-family="Georgia, serif" font-weight="600" font-size="22" fill="#F7F3EC">Mission Bridge</text>
+            <text x="173" y="37" font-family="Inter, sans-serif" font-weight="700" font-size="10.5" letter-spacing="2.2" fill="#B8874A">ARCHIVE</text>
           </svg>
         </div>
         <h1 id="missionary-title">Loading archive…</h1>

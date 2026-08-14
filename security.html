@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Security &amp; Privacy — Mission Bridge Archive</title>
+<meta name="description" content="How Mission Bridge Archive stores and protects your missionary's emails and photos, and who can see them.">
+<link rel="canonical" href="https://getmissionbridge.com/security.html">
+<meta property="og:title" content="Security &amp; Privacy — Mission Bridge Archive">
+<meta property="og:description" content="How Mission Bridge Archive stores and protects your missionary's emails and photos, and who can see them.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #FFFFFF;
+    --bg-soft: #F7F8FA;
+    --ink: #171B21;
+    --ink-soft: #5B6472;
+    --ink-faint: #8A93A1;
+    --navy: #2B3A4A;
+    --navy-mid: #1D2733;
+    --navy-deep: #131D27;
+    --accent: #B8874A;
+    --accent-deep: #96703A;
+    --accent-soft: rgba(184,135,74,0.12);
+    --border: rgba(23,27,33,0.10);
+    --border-soft: rgba(23,27,33,0.06);
+    --shadow-sm: 0 2px 10px rgba(19,29,39,0.07);
+    --shadow-lg: 0 40px 90px -30px rgba(19,29,39,0.30);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--white); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: -0.01em; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 28px; }
+  .reveal { opacity: 1; transform: none; }
+  .js-ready .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .js-ready .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .js-ready .reveal { opacity: 1; transform: none; transition: none; } }
+
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(247,248,250,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 18px -10px rgba(19,29,39,0.18);
+  }
+  nav .inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 28px; max-width: 1140px; margin: 0 auto; }
+  .logo { display: flex; align-items: center; flex-shrink: 0; }
+  .logo svg { height: 36px; width: auto; }
+  .nav-links { display: flex; align-items: center; gap: 26px; margin-right: auto; margin-left: 36px; }
+  .nav-links a { color: var(--ink-soft); text-decoration: none; font-size: 14.5px; font-weight: 500; transition: color 0.15s ease; }
+  .nav-links a.is-active { color: var(--navy); font-weight: 600; }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-cta {
+    background: linear-gradient(160deg, #34465a, var(--navy)); color: var(--white); border: none;
+    padding: 11px 24px; border-radius: 100px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14.5px;
+    cursor: pointer; text-decoration: none; display: inline-block;
+    box-shadow: 0 4px 10px -4px rgba(19,29,39,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .nav-cta:hover { background: linear-gradient(160deg, #3d5268, var(--navy-mid)); transform: translateY(-1px); box-shadow: var(--shadow-sm), 0 6px 14px -4px rgba(19,29,39,0.4); }
+  @media (max-width: 760px) { .nav-links { display: none; } }
+
+  .page-header { padding: 72px 0 48px; background: linear-gradient(180deg, var(--bg-soft), var(--white)); text-align: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-deep); font-weight: 600; margin-bottom: 20px;
+  }
+  .eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--accent-deep); }
+  .page-header h1 { font-size: clamp(28px, 3.8vw, 42px); line-height: 1.16; color: var(--navy); max-width: 620px; margin: 0 auto 16px; }
+  .page-header p { font-size: 17.5px; color: var(--ink-soft); max-width: 520px; margin: 0 auto; }
+
+  .section { padding: 20px 0 80px; }
+  .item { display: flex; gap: 20px; padding: 30px 0; border-bottom: 1px solid var(--border-soft); }
+  .item:last-of-type { border-bottom: none; }
+  .item-icon {
+    flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 26%, #405670, var(--navy) 62%, var(--navy-mid));
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    box-shadow: 0 8px 16px -6px rgba(19,29,39,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
+  }
+  .item-icon svg { width: 21px; height: 21px; }
+  .item h3 { font-size: 18px; color: var(--navy); margin-bottom: 8px; font-weight: 600; }
+  .item p { color: var(--ink-soft); font-size: 15.5px; }
+  .item p + p { margin-top: 10px; }
+
+  .note-box {
+    background: var(--accent-soft); border: 1px solid rgba(184,135,74,0.22); border-radius: 14px;
+    padding: 20px 22px; margin-top: 8px; font-size: 15px; color: var(--accent-deep); line-height: 1.6;
+  }
+  .note-box strong { color: var(--navy); }
+
+  .cta-band {
+    background: linear-gradient(165deg, #34465a, var(--navy) 60%, var(--navy-mid));
+    border-radius: 28px; padding: 52px 40px; text-align: center; position: relative; overflow: hidden;
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.08);
+    margin-top: 30px;
+  }
+  .cta-band h2 { color: var(--white); font-size: clamp(22px, 2.6vw, 28px); margin-bottom: 12px; }
+  .cta-band p { color: rgba(255,255,255,0.7); max-width: 440px; margin: 0 auto 24px; }
+  .cta-band a.btn-primary {
+    background: linear-gradient(160deg, #d7ab72, var(--accent)); color: var(--navy-deep); text-decoration: none;
+    display: inline-block; padding: 14px 28px; border-radius: 100px; font-weight: 600; font-size: 15px;
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .cta-band a.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
+
+  footer { padding: 60px 0; background: var(--navy-deep); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+  footer .wrap { max-width: 1140px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
+  footer .logo svg { height: 30px; }
+  .fnote { color: rgba(255,255,255,0.5); font-size: 13.5px; }
+  .fnote a { color: rgba(255,255,255,0.72); text-decoration: underline; }
+
+  @media (max-width: 620px) {
+    .item { flex-direction: column; gap: 14px; }
+    .cta-band { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <div class="logo">
+      <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fadeLeftNav" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#2B3A4A" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#2B3A4A" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="fiveEighthsClipNav"><rect x="0" y="0" width="160" height="56"/></clipPath>
+        </defs>
+        <g clip-path="url(#fiveEighthsClipNav)">
+          <line x1="60" y1="2" x2="60" y2="42" stroke="#2B3A4A" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 60 2 Q 140 32 220 2" stroke="#2B3A4A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftNav)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="60" y1="26" x2="220" y2="26" stroke="#2B3A4A" stroke-width="3" stroke-linecap="round"/>
+          <line x1="75" y1="7.1" x2="75" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="90" y1="11.1" x2="90" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="105" y1="14.1" x2="105" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="120" y1="16.1" x2="120" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="135" y1="16.9" x2="135" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+          <line x1="150" y1="16.8" x2="150" y2="26" stroke="#2B3A4A" stroke-width="1.4"/>
+        </g>
+        <text x="172" y="22" font-family="Georgia, serif" font-weight="600" font-size="22" fill="#2B3A4A">Mission Bridge</text>
+        <text x="173" y="37" font-family="Inter, sans-serif" font-weight="700" font-size="10.5" letter-spacing="2.2" fill="#B8874A">ARCHIVE</text>
+      </svg>
+    </div>
+    <div class="nav-links">
+      <a href="about.html">Our Story</a>
+      <a href="faq.html">FAQ</a>
+      <a href="security.html" class="is-active">Security</a>
+    </div>
+    <a class="nav-cta" href="index.html#signup">Get started</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="wrap">
+    <div class="eyebrow">Security &amp; privacy</div>
+    <h1>How we protect your family's memories</h1>
+    <p>This is your missionary's private correspondence with their family. Here's exactly how it's handled.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap">
+
+    <div class="item reveal">
+      <div class="item-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div>
+        <h3>Your dashboard is private, not public</h3>
+        <p>There's no password to remember or reset — instead, access is through a private, unlisted link we email your family. It isn't indexed by search engines and isn't discoverable by guessing.</p>
+        <p>That also means anyone who has the link can view it, so treat it the way you'd treat any private family link — don't post it publicly or forward it beyond your family.</p>
+      </div>
+    </div>
+
+    <div class="item reveal">
+      <div class="item-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 9h16"/></svg>
+      </div>
+      <div>
+        <h3>Where everything is stored</h3>
+        <p>Emails and account details are stored in a managed database. Photos and voice memos are stored using Cloudflare's object storage, the same category of infrastructure widely used across the industry for file storage. When your dashboard displays a photo, it's served through a temporary, time-limited link rather than a permanently public URL.</p>
+      </div>
+    </div>
+
+    <div class="item reveal">
+      <div class="item-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+      </div>
+      <div>
+        <h3>We never sell or share your data</h3>
+        <p>Your missionary's emails, photos, and your family's contact information are used for exactly one purpose: running your archive and sending you the updates you've signed up for. We don't sell data, and we don't run ad tracking on this site.</p>
+      </div>
+    </div>
+
+    <div class="item reveal">
+      <div class="item-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </div>
+      <div>
+        <h3>Deletion is deliberate, never automatic</h3>
+        <p>We don't quietly purge data in the background. If your family ever wants an account permanently and completely deleted, that's a manual, deliberate request you make to us directly — it's never something that happens without you asking for it.</p>
+      </div>
+    </div>
+
+    <div class="note-box reveal">
+      <strong>A note on scale:</strong> Mission Bridge Archive is a small, founder-run product, not a large company with a dedicated security team. We've built it carefully and honestly, following standard practices for handling private data — but if you have specific security questions before signing up, email us directly and we'll answer them plainly.
+    </div>
+
+    <div class="cta-band reveal">
+      <h2>Questions before you sign up?</h2>
+      <p>Ask us directly — we'd rather answer up front than have you wonder.</p>
+      <a class="btn-primary" href="mailto:tyler@getmissionbridge.com">Email tyler@getmissionbridge.com</a>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">
+      <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fadeLeftFoot" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#F6F1E6" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#F6F1E6" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="fiveEighthsClipFoot"><rect x="0" y="0" width="160" height="56"/></clipPath>
+        </defs>
+        <g clip-path="url(#fiveEighthsClipFoot)">
+          <line x1="60" y1="2" x2="60" y2="42" stroke="#F6F1E6" stroke-width="5" stroke-linecap="round"/>
+          <path d="M 60 2 Q 140 32 220 2" stroke="#F6F1E6" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M 60 2 Q 32 13 4 26" stroke="url(#fadeLeftFoot)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="60" y1="26" x2="220" y2="26" stroke="#F6F1E6" stroke-width="3" stroke-linecap="round"/>
+          <line x1="75" y1="7.1" x2="75" y2="26" stroke="#F6F1E6" stroke-width="1.4"/>
+          <line x1="90" y1="11.1" x2="90" y2="26" stroke="#F6F1E6" stroke-width="1.4"/>
+          <line x1="105" y1="14.1" x2="105" y2="26" stroke="#F6F1E6" stroke-width="1.4"/>
+          <line x1="120" y1="16.1" x2="120" y2="26" stroke="#F6F1E6" stroke-width="1.4"/>
+          <line x1="135" y1="16.9" x2="135" y2="26" stroke="#F6F1E6" stroke-width="1.4"/>
+          <line x1="150" y1="16.8" x2="150" y2="26" stroke="#F6F1E6" stroke-width="1.4"/>
+        </g>
+        <text x="172" y="22" font-family="Georgia, serif" font-weight="600" font-size="22" fill="#F6F1E6">Mission Bridge</text>
+        <text x="173" y="37" font-family="Inter, sans-serif" font-weight="700" font-size="10.5" letter-spacing="2.2" fill="#B8874A">ARCHIVE</text>
+      </svg>
+    </div>
+    <div class="fnote">
+      Built for missionary families, with care. ·
+      <a href="index.html">Home</a> ·
+      <a href="about.html">Our story</a> ·
+      <a href="faq.html">FAQ</a> ·
+      <a href="mailto:tyler@getmissionbridge.com">tyler@getmissionbridge.com</a> ·
+      <a href="find-dashboard.html">Lost your dashboard link?</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js-ready');
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+} else {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
+}
+</script>
+
+</body>
+</html>

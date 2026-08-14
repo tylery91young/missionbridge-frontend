@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ffffff">
-<title>Mission Bridge Archive: Never Lose a Single Missionary Photo or Email</title>
-<meta name="description" content="Mission Bridge Archive automatically saves every missionary email and every missionary photo the moment they're sent — before the mission-issued account is wiped for good. Set up in five minutes, no app required.">
+<meta name="theme-color" content="#161d24">
+<meta name="robots" content="noindex, nofollow">
+<title>Mission Bridge Archive — 3D Story Concept (Preview)</title>
+<meta name="description" content="Preview: a scroll-driven 3D telling of why Mission Bridge Archive exists.">
 <link rel="canonical" href="https://getmissionbridge.com/">
-<meta property="og:title" content="Mission Bridge Archive: Never Lose a Single Missionary Photo or Email">
-<meta property="og:description" content="Automatically saves every missionary email and photo the moment it's sent, before the mission-issued account is wiped for good.">
-<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -56,7 +54,7 @@
   .wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
 
   .reveal { opacity: 1; transform: none; }
-  .js-ready .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .js-ready .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .js-ready .reveal.is-visible { opacity: 1; transform: translateY(0); }
   @media (prefers-reduced-motion: reduce) {
     .js-ready .reveal { opacity: 1; transform: none; transition: none; }
@@ -87,6 +85,10 @@
     92%  { opacity: 1; }
     100% { opacity: 0; }
   }
+  @keyframes bounceCue {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.45; }
+    50% { transform: translate(-50%, 8px); opacity: 1; }
+  }
   .hero::before, .hero::after { animation: ambientDrift 16s ease-in-out infinite; }
   .hero::after { animation-direction: reverse; animation-duration: 19s; }
   .archive-panel { animation: floatCard 7s ease-in-out infinite; }
@@ -97,29 +99,19 @@
     .archive-panel::after { display: none; }
     .bridge-node::before { display: none; }
     .travel-dot { display: none; }
+    .scroll-cue { animation: none; }
   }
 
-  .urgency-bar {
-    background: var(--accent-soft);
-    border-bottom: 1px solid var(--accent-soft-strong);
+  .preview-flag {
+    background: var(--navy-deep);
+    color: rgba(255,255,255,0.75);
     text-align: center;
-    padding: 10px 20px;
-    font-size: 13.5px;
+    font-size: 12.5px;
     font-weight: 600;
-    color: var(--navy);
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 4px 14px -8px rgba(184,135,74,0.35);
+    letter-spacing: 0.03em;
+    padding: 8px 16px;
   }
-  .urgency-bar strong { color: var(--accent-deep); }
-
-  .quote-card, .product-card {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-  .quote-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-
-  .count-up { display: inline-block; }
+  .preview-flag strong { color: var(--accent); }
 
   nav {
     position: sticky; top: 0; z-index: 50;
@@ -130,21 +122,11 @@
   }
   nav .inner {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 20px;
     padding: 18px 28px;
     max-width: 1140px; margin: 0 auto;
   }
-  .logo { display: flex; align-items: center; flex-shrink: 0; }
+  .logo { display: flex; align-items: center; }
   .logo svg { height: 36px; width: auto; }
-  .nav-links { display: flex; align-items: center; gap: 26px; margin-right: auto; margin-left: 36px; }
-  .nav-links a {
-    color: var(--ink-soft);
-    text-decoration: none;
-    font-size: 14.5px;
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-  .nav-links a:hover { color: var(--navy); }
   .nav-cta {
     background: linear-gradient(160deg, #34465a, var(--navy));
     color: var(--white);
@@ -155,15 +137,10 @@
     font-weight: 500;
     font-size: 14.5px;
     cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
     box-shadow: 0 4px 10px -4px rgba(19,29,39,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   }
   .nav-cta:hover { background: linear-gradient(160deg, #3d5268, var(--navy-mid)); transform: translateY(-1px); box-shadow: var(--shadow-sm), 0 6px 14px -4px rgba(19,29,39,0.4); }
-  @media (max-width: 760px) {
-    .nav-links { display: none; }
-  }
 
   .hero {
     background: var(--white);
@@ -197,8 +174,8 @@
   }
   .eyebrow {
     display: inline-flex; align-items: center; gap: 9px;
-    font-size: 14.5px;
-    letter-spacing: 0.08em;
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--accent-deep);
     font-weight: 600;
@@ -410,113 +387,130 @@
   }
   .archive-panel-foot strong { color: var(--navy); }
 
-  .trust-strip {
-    background: linear-gradient(180deg, var(--bg-soft), var(--white));
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 26px 0;
-    position: relative;
-    z-index: 1;
-    box-shadow: var(--shadow-sm);
+  .scroll-cue {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+    color: var(--ink-faint);
+    animation: bounceCue 2.2s ease-in-out infinite;
+    z-index: 2;
   }
-  .trust-strip .wrap {
-    display: flex; justify-content: center; gap: 56px; row-gap: 22px; flex-wrap: wrap;
-    text-align: center;
+
+  /* ---- 3D scroll story ---- */
+  .three-wrapper { position: relative; height: 420vh; background: #161d24; }
+  .three-stage {
+    position: sticky; top: 0; height: 100vh; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
   }
-  .trust-stat { max-width: 200px; }
-  .trust-stat strong {
+  #three-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .three-caption {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 28px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .three-caption-inner { max-width: 560px; margin: 0 auto; }
+  .three-caption .scene-eyebrow {
+    font-size: 12.5px; letter-spacing: 0.09em; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 16px; color: var(--accent);
+  }
+  .three-caption .scene-title {
+    font-size: clamp(26px, 3.6vw, 40px); line-height: 1.18; margin-bottom: 18px;
+    font-weight: 500; color: #fff;
+  }
+  .three-caption .scene-title em { font-style: normal; font-weight: 600; color: var(--accent); }
+  .three-caption .scene-body { font-size: 17px; line-height: 1.65; max-width: 480px; margin: 0 auto; color: rgba(255,255,255,0.72); }
+  .three-caption .scene-signature { margin-top: 20px; font-size: 14px; color: rgba(255,255,255,0.45); font-weight: 600; }
+  .three-cta {
+    margin-top: 28px;
+    background: linear-gradient(160deg, #d7ab72, var(--accent)); color: var(--navy-deep); border: none;
+    padding: 16px 32px; border-radius: 100px; font-weight: 600; font-size: 15.5px;
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+    cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease;
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 27px;
-    line-height: 1.2;
-    color: var(--navy);
-    display: block;
-    margin-bottom: 5px;
   }
-  .trust-stat span {
-    display: block;
-    font-size: 12.5px;
-    line-height: 1.4;
-    color: var(--ink-soft);
-    font-weight: 500;
-  }
-  .trust-stat strong .count-up { display: inline; font-size: inherit; color: inherit; font-weight: inherit; }
-
-  .section { padding: 100px 0; background: var(--white); }
-  .section.alt { background: var(--bg-soft); }
-  .section-head { max-width: 620px; margin-bottom: 58px; }
-  .section-eyebrow {
-    font-size: 14.5px; letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--accent-deep); font-weight: 600; margin-bottom: 14px;
-    white-space: nowrap;
-  }
-  h2.section-title {
-    font-size: clamp(28px, 3.4vw, 40px);
-    color: var(--navy);
-    line-height: 1.16;
-  }
-  .section-title em { font-style: normal; color: var(--accent-deep); font-weight: 600; }
-  .section-lead {
-    font-size: 17px;
-    color: var(--ink-soft);
-    max-width: 640px;
-    margin-top: 6px;
+  .three-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
+  .three-cta-note { margin-top: 14px; font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 600; }
+  .three-hint {
+    position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%);
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.32); font-weight: 600; z-index: 2;
+    pointer-events: none;
   }
 
-  .quote-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .quote-card {
-    position: relative;
-    background: linear-gradient(165deg, #FFFFFF, var(--bg-soft));
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 30px 28px;
-    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.8);
-    overflow: hidden;
-  }
-  .quote-card::before {
-    content: '\201C';
-    position: absolute; top: -18px; left: 14px;
-    font-family: Georgia, serif;
-    font-size: 90px;
-    color: var(--accent-soft);
+  /* ---- Fallback (no WebGL / reduced motion) ---- */
+  #three-fallback { display: none; }
+  .story-spine { position: relative; }
+  .story-spine::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 0; width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, transparent, rgba(184,135,74,0.32) 8%, rgba(184,135,74,0.32) 92%, transparent);
     z-index: 0;
   }
-  .quote-card p {
-    position: relative; z-index: 1;
-    font-size: 16px; color: var(--ink); font-style: italic; margin-bottom: 16px;
-  }
-  .quote-card .qsrc { position: relative; z-index: 1; font-size: 12.5px; color: var(--ink-soft); font-weight: 700; }
-
-  .how-thread { position: relative; }
-  .how-line {
-    position: absolute; left: 31px; top: 10px; bottom: 10px; width: 2px;
-    background: linear-gradient(to bottom, var(--accent-soft-strong), transparent);
-  }
-  .how-row {
+  .scene {
     position: relative;
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 28px;
-    padding: 32px 0;
-  }
-  .how-dot {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 32% 26%, #405670, var(--navy) 62%, var(--navy-mid));
+    min-height: 90vh;
     display: flex; align-items: center; justify-content: center;
+    padding: 90px 28px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .scene-inner { max-width: 560px; position: relative; z-index: 1; }
+  .scene-icon-cluster { position: relative; width: 108px; height: 108px; margin: 0 auto 34px; }
+  .scene-icon {
+    width: 108px; height: 108px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; position: relative;
+  }
+  .scene-icon svg { width: 44px; height: 44px; }
+  .scene-icon-mini {
+    position: absolute; width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 14px -4px rgba(19,29,39,0.4), inset 0 1px 1px rgba(255,255,255,0.35);
+  }
+  .scene-icon-mini svg { width: 17px; height: 17px; }
+  .scene-icon-mini--a { top: -6px; right: -10px; background: radial-gradient(circle at 32% 28%, #d9ab6f, var(--accent) 60%, var(--accent-deep)); }
+  .scene-icon-mini--b { bottom: -2px; right: -20px; background: radial-gradient(circle at 32% 28%, #405670, var(--navy) 60%, var(--navy-mid)); }
+  .scene-eyebrow { font-size: 12.5px; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 600; margin-bottom: 16px; }
+  .scene-title { font-size: clamp(27px, 3.6vw, 42px); line-height: 1.18; margin-bottom: 20px; font-weight: 500; }
+  .scene-title em { font-style: normal; font-weight: 600; }
+  .scene-body { font-size: 17.5px; line-height: 1.65; max-width: 480px; margin: 0 auto; }
+  .scene-1 { background: var(--white); }
+  .scene-1 .scene-eyebrow { color: var(--accent-deep); }
+  .scene-1 .scene-title { color: var(--navy); }
+  .scene-1 .scene-title em { color: var(--accent-deep); }
+  .scene-1 .scene-body { color: var(--ink-soft); }
+  .scene-1 .scene-icon { background: radial-gradient(circle at 32% 26%, #405670, var(--navy) 62%, var(--navy-mid)); box-shadow: 0 16px 32px -12px rgba(19,29,39,0.45), inset 0 1px 1px rgba(255,255,255,0.3); color: #fff; }
+  .scene-2 { background: radial-gradient(ellipse 800px 500px at 50% 20%, #1a222c, var(--navy-deep) 70%); }
+  .scene-2 .scene-eyebrow { color: rgba(255,138,115,0.85); }
+  .scene-2 .scene-title { color: var(--white); }
+  .scene-2 .scene-title em { color: var(--error-on-dark); }
+  .scene-2 .scene-body { color: rgba(255,255,255,0.66); }
+  .scene-2 .scene-icon { background: radial-gradient(circle at 32% 26%, #3a2b2b, #221a1a 62%, #140f0f); box-shadow: 0 16px 32px -12px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08), 0 0 0 1px rgba(255,138,115,0.18); color: var(--error-on-dark); }
+  .scene-3 { background: linear-gradient(180deg, var(--white), var(--bg-soft)); }
+  .scene-3 .scene-eyebrow { color: var(--accent-deep); }
+  .scene-3 .scene-title { color: var(--navy); }
+  .scene-3 .scene-title em { color: var(--accent-deep); }
+  .scene-3 .scene-body { color: var(--ink-soft); }
+  .scene-3 .scene-icon { background: radial-gradient(circle at 30% 30%, #dcb37f, var(--accent) 55%, var(--navy) 100%); box-shadow: 0 16px 32px -12px rgba(184,135,74,0.4), inset 0 1px 1px rgba(255,255,255,0.4); color: #fff; }
+  .scene-3 .scene-signature { margin-top: 22px; font-size: 14px; color: var(--ink-faint); font-weight: 600; }
+  .scene-4 { background: linear-gradient(165deg, #34465a, var(--navy) 60%, var(--navy-mid)); }
+  .scene-4 .scene-eyebrow { color: var(--accent); }
+  .scene-4 .scene-title { color: var(--white); }
+  .scene-4 .scene-title em { color: var(--accent); }
+  .scene-4 .scene-body { color: rgba(255,255,255,0.72); }
+  .scene-4 .scene-icon { background: radial-gradient(circle at 32% 26%, #d7ab72, var(--accent) 62%, var(--accent-deep)); box-shadow: 0 16px 32px -12px rgba(184,135,74,0.5), inset 0 1px 1px rgba(255,255,255,0.4); color: var(--navy-deep); }
+  .scene-4-cta {
+    margin-top: 30px;
+    background: linear-gradient(160deg, #d7ab72, var(--accent)); color: var(--navy-deep); border: none;
+    padding: 16px 32px; border-radius: 100px; font-weight: 600; font-size: 15.5px;
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+    cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease;
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    color: var(--white);
-    z-index: 1;
-    box-shadow: 0 10px 20px -8px rgba(19,29,39,0.45), inset 0 1px 1px rgba(255,255,255,0.25);
   }
-  .how-row h3 { font-size: 21px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
-  .how-row p { color: var(--ink-soft); max-width: 540px; }
-  .how-closer {
-    text-align: center; margin-top: 44px; font-family: 'Inter', sans-serif;
-    font-weight: 500; font-size: 19px; color: var(--navy); font-style: normal;
-  }
+  .scene-4-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
+  .scene-4-note { margin-top: 14px; font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 600; }
 
   .founding-note {
     background: var(--accent-soft);
@@ -527,36 +521,6 @@
     margin-bottom: 26px; text-align: center;
     box-shadow: 0 4px 12px -6px rgba(184,135,74,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
   }
-  .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
-  .product-grid.single { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
-  .product-card { position: relative; border-radius: 22px; padding: 42px 38px; overflow: hidden; }
-  .product-card.primary { background: linear-gradient(160deg, #34465a, var(--navy) 55%, var(--navy-mid)); color: var(--white); box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.1); }
-  .product-card.primary::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--navy-mid));
-  }
-  .product-card.secondary { background: linear-gradient(165deg, #FFFFFF, var(--bg-soft)); border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
-  .product-tag {
-    display: inline-block; font-size: 11.5px; font-weight: 600;
-    letter-spacing: 0.07em; text-transform: uppercase;
-    padding: 5px 12px; border-radius: 100px; margin-bottom: 20px;
-  }
-  .product-card.primary .product-tag { background: rgba(184,135,74,0.22); color: var(--accent); }
-  .product-card.secondary .product-tag { background: var(--accent-soft); color: var(--accent-deep); }
-  .product-card h3 { font-size: 28px; margin-bottom: 12px; }
-  .product-card.primary h3 { color: var(--white); }
-  .product-card.secondary h3 { color: var(--navy); }
-  .product-card p { font-size: 15.5px; margin-bottom: 24px; }
-  .product-card.primary p { color: rgba(255,255,255,0.75); }
-  .product-card.secondary p { color: var(--ink-soft); }
-  .product-price { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 34px; }
-  .product-price span { font-size: 14.5px; font-weight: 600; opacity: 0.6; }
-  .product-list { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
-  .product-list li { font-size: 14.5px; display: flex; gap: 10px; align-items: flex-start; }
-  .li-check { flex-shrink: 0; margin-top: 3px; color: var(--accent); }
-  .product-card.primary .product-list li { color: rgba(255,255,255,0.85); }
-  .product-card.secondary .product-list li { color: var(--ink-soft); }
 
   .waitlist {
     background: linear-gradient(165deg, #34465a, var(--navy) 60%, var(--navy-mid));
@@ -576,7 +540,7 @@
   }
   .waitlist > * { position: relative; }
   .waitlist h2 { color: var(--white); font-size: clamp(26px, 3vw, 36px); margin-bottom: 14px; }
-  .waitlist p { color: rgba(255,255,255,0.7); max-width: 460px; margin: 0 auto 32px; }
+  .waitlist p { color: rgba(255,255,255,0.7); max-width: 480px; margin: 0 auto 32px; }
   .signup-form { display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto; }
   .signup-form input {
     width: 100%; padding: 15px 20px; border-radius: 100px;
@@ -642,16 +606,21 @@
 
   @media (max-width: 880px) {
     .hero-grid { grid-template-columns: 1fr; gap: 44px; }
-    .quote-grid { grid-template-columns: 1fr; }
-    .product-grid { grid-template-columns: 1fr; }
-    .section { padding: 64px 0; }
-    .waitlist { padding: 48px 28px; }
     .archive-panel { padding: 28px 24px; }
     .archive-panel-tilt { transform: none; }
+    .waitlist { padding: 48px 28px; }
+    .three-wrapper { height: 480vh; }
+    .three-caption .scene-title { font-size: clamp(24px, 6vw, 32px); }
+    .three-caption .scene-body { font-size: 15.5px; }
+    .scene { min-height: 82vh; padding: 72px 22px; }
+    .scene-title { font-size: clamp(24px, 6vw, 34px); }
+    .scene-body { font-size: 16px; }
   }
 </style>
 </head>
 <body>
+
+<div class="preview-flag">PREVIEW ONLY — not linked from the live site · <strong>3D scroll-story concept</strong></div>
 
 <nav>
   <div class="inner">
@@ -680,23 +649,16 @@
         <text x="173" y="37" font-family="Inter, sans-serif" font-weight="700" font-size="10.5" letter-spacing="2.2" fill="#B8874A">ARCHIVE</text>
       </svg>
     </div>
-    <div class="nav-links">
-      <a href="about.html">Our Story</a>
-      <a href="faq.html">FAQ</a>
-      <a href="security.html">Security</a>
-    </div>
     <button class="nav-cta" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Get started</button>
   </div>
 </nav>
 
-<div class="urgency-bar" id="urgency-bar">Missionary email accounts are wiped within hours of coming home — <strong>with zero warning.</strong></div>
-
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow">For LDS missionary families · Founding rate now open</div>
-      <h1 class="hero-head">When their mission ends, their email account gets wiped. <em>Every photo. Every letter. Gone — with no warning.</em></h1>
-      <p class="hero-sub">Mission Bridge Archive saves everything they email home — texts, photos, voice memos — the moment it arrives, so that account being wiped never costs you a single memory. Set it up once, then stop thinking about it.</p>
+      <div class="eyebrow">For missionaries and the families waiting for them · Founding rate now open</div>
+      <h1 class="hero-head">Everything they email home, saved automatically. <em>So no one loses it.</em></h1>
+      <p class="hero-sub">We save every email and photo the moment it arrives, so you don't have to hope enough got backed up before their account closes for good. Set it up once, then stop thinking about it.</p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Get started</button>
         <span class="hero-note">One-time fee · No app required</span>
@@ -747,96 +709,128 @@
       </div>
     </div>
   </div>
+  <div class="scroll-cue reveal" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
 </header>
 
-<div class="trust-strip">
-  <div class="wrap">
-    <div class="trust-stat"><strong>No warning</strong><span>given before missionary accounts get wiped</span></div>
-    <div class="trust-stat"><strong><span class="count-up" data-target="80">0</span></strong><span>families surveyed in our research</span></div>
-    <div class="trust-stat"><strong><span class="count-up" data-target="71">0</span>%</strong><span>said losing photos is a real fear</span></div>
-  </div>
-</div>
+<section id="three-story" class="three-wrapper">
+  <div class="three-stage">
+    <canvas id="three-canvas"></canvas>
 
-<section class="section alt">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div class="section-eyebrow">The problem</div>
-      <h2 class="section-title">Here's what actually happens <em>when a mission ends.</em></h2>
-      <p class="section-lead">Missionaries don't get their email account from Google, or from you — the mission issues it, and the mission controls it. The moment a mission officially ends, that account is disabled or handed off to the next missionary. Every weekly update. Every photo they ever attached. Every voice memo. It only ever lived in that one inbox — no export button, no warning, no grace period. It's just gone.</p>
-    </div>
-    <div class="quote-grid reveal">
-      <div class="quote-card">
-        <p>"I can't tell you how many people I've seen lose all their pictures once they returned, because nobody backed them up."</p>
-        <div class="qsrc">Missionary mom, survey response</div>
-      </div>
-      <div class="quote-card">
-        <p>"My sons both lost everything after their missions. Hoping we can do something different with my daughter."</p>
-        <div class="qsrc">Missionary mom, survey response</div>
-      </div>
-      <div class="quote-card">
-        <p>"Within hours of getting home, everything on their account is either locked or wiped."</p>
-        <div class="qsrc">Missionary mom, survey response</div>
+    <div class="three-caption" data-stage="0">
+      <div class="three-caption-inner">
+        <div class="scene-eyebrow">Every mission starts the same way</div>
+        <h2 class="scene-title">They send it home, <em>every week.</em></h2>
+        <p class="scene-body">Whether you're the one out serving, or the one waiting by the inbox — the weekly update, the photo from a baptism, the voice memo you play back just to hear their voice.</p>
       </div>
     </div>
-  </div>
-</section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div class="section-eyebrow">How The Bridge works</div>
-      <h2 class="section-title">Set it up once. <em>Never think about it again.</em></h2>
-    </div>
-    <div class="how-thread reveal">
-      <div class="how-line"></div>
-      <div class="how-row">
-        <div class="how-dot">1</div>
-        <div><h3>They send their update home like normal</h3><p>Your missionary emails one simple address, just like the weekly update they already send. No new habits to learn, no app to download.</p></div>
-      </div>
-      <div class="how-row">
-        <div class="how-dot">2</div>
-        <div><h3>We save everything they email home, automatically</h3><p>Every email and every photo they attach is saved the moment it arrives, long before their account is ever at risk.</p></div>
-      </div>
-      <div class="how-row">
-        <div class="how-dot">3</div>
-        <div><h3>We'll also help you back up their photos</h3><p>Their phone holds way more photos than they'll ever email home. We'll walk you through setting up Google Photos backup correctly, so nothing on their phone gets left behind either.</p></div>
+    <div class="three-caption" data-stage="1">
+      <div class="three-caption-inner">
+        <div class="scene-eyebrow">Then, one day</div>
+        <h2 class="scene-title">Their account is wiped. <em>No warning.</em></h2>
+        <p class="scene-body">The moment a mission officially ends, that email account goes with it — locked or deleted, often within hours. Every email, every photo. Gone, for both of you.</p>
       </div>
     </div>
-    <p class="how-closer reveal">That's it. You get to stop worrying about what you might lose, and just look forward to hearing from them.</p>
+
+    <div class="three-caption" data-stage="2">
+      <div class="three-caption-inner">
+        <div class="scene-eyebrow">So I built something</div>
+        <h2 class="scene-title">That's why I started <em>Mission Bridge Archive.</em></h2>
+        <p class="scene-body">I watched families lose years of memories overnight, with no way to get them back. So I built a bridge between the missionary sending it home and the family keeping it safe.</p>
+        <div class="scene-signature">— Tyler, founder</div>
+      </div>
+    </div>
+
+    <div class="three-caption" data-stage="3">
+      <div class="three-caption-inner">
+        <div class="scene-eyebrow">One simple archive</div>
+        <h2 class="scene-title">$50, once. <em>Everything, saved.</em></h2>
+        <p class="scene-body">Every email and every photo, captured automatically and kept safe for the whole mission and long after it ends. No app to download. Nothing to remember.</p>
+        <button class="three-cta" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Get started — $50</button>
+        <div class="three-cta-note">Founding rate · price rises to $75 once this batch is full</div>
+      </div>
+    </div>
+
+    <div class="three-hint">Keep scrolling</div>
   </div>
 </section>
+<noscript><style>#three-story{display:none} #three-fallback{display:block}</style></noscript>
 
-<section class="section alt">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div class="section-eyebrow">What you get</div>
-      <h2 class="section-title">One thing, done right. <em>Nothing to configure.</em></h2>
-    </div>
-    <div class="reveal">
-      <div class="founding-note" id="founding-note">Founding rate for our first families, $75 once this batch is full.</div>
-      <div class="product-grid single">
-        <div class="product-card primary">
-          <span class="product-tag">Core</span>
-          <h3>The Bridge</h3>
-          <p>Automatic backup of every email and photo your missionary sends home, safely kept for their entire mission and beyond.</p>
-          <div class="product-price">$50<span> one-time · founding rate</span></div>
-          <ul class="product-list">
-            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Set up in five minutes, no app needed</li>
-            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Nothing lost when their account is wiped</li>
-            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Private by default. You control who sees it</li>
-          </ul>
+<div id="three-fallback">
+<div class="story-spine">
+
+  <section class="scene scene-1">
+    <div class="scene-inner reveal">
+      <div class="scene-icon-cluster">
+        <div class="scene-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
+        </div>
+        <div class="scene-icon-mini scene-icon-mini--a" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="14" height="10" rx="1.5"/><path d="M3.5 6.5l6.5 5 6.5-5"/></svg>
+        </div>
+        <div class="scene-icon-mini scene-icon-mini--b" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h2.3l1.2-1.8h5l1.2 1.8H16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z"/><circle cx="10" cy="11" r="2.3"/></svg>
         </div>
       </div>
+      <div class="scene-eyebrow">Every mission starts the same way</div>
+      <h2 class="scene-title">They send it home, <em>every week.</em></h2>
+      <p class="scene-body">Whether you're the one out serving, or the one waiting by the inbox — the weekly update, the photo from a baptism, the voice memo you play back just to hear their voice.</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" style="padding-top: 0;">
+  <section class="scene scene-2">
+    <div class="scene-inner reveal">
+      <div class="scene-icon-cluster">
+        <div class="scene-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
+        </div>
+      </div>
+      <div class="scene-eyebrow">Then, one day</div>
+      <h2 class="scene-title">Their account is wiped. <em>No warning.</em></h2>
+      <p class="scene-body">The moment a mission officially ends, that email account goes with it — locked or deleted, often within hours. Every email, every photo, every voice memo. It doesn't matter who was keeping track. It's gone, for both of you.</p>
+    </div>
+  </section>
+
+  <section class="scene scene-3">
+    <div class="scene-inner reveal">
+      <div class="scene-icon-cluster">
+        <div class="scene-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c1.5-4 4-6 9-6s7.5 2 9 6" stroke-linejoin="round"/><path d="M7 17V9.5" stroke-linecap="round"/><path d="M17 17V9.5" stroke-linecap="round"/><path d="M3 17h18" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="scene-eyebrow">So I built something</div>
+      <h2 class="scene-title">That's why I started <em>Mission Bridge Archive.</em></h2>
+      <p class="scene-body">I watched families lose years of memories overnight, with no way to get them back. So I built a bridge between the missionary sending it home and the family keeping it safe — one that saves everything the moment it arrives.</p>
+      <div class="scene-signature">— Tyler, founder</div>
+    </div>
+  </section>
+
+  <section class="scene scene-4">
+    <div class="scene-inner reveal">
+      <div class="scene-icon-cluster">
+        <div class="scene-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
+        </div>
+      </div>
+      <div class="scene-eyebrow">One simple archive</div>
+      <h2 class="scene-title">$50, once. <em>Everything, saved.</em></h2>
+      <p class="scene-body">Every email and every photo — captured automatically the moment it's sent, and kept safe for the whole mission and long after it ends. No app for the missionary to download. Nothing for the family to remember.</p>
+      <button class="scene-4-cta" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">Get started — $50</button>
+      <div class="scene-4-note">Founding rate · price rises to $75 once this batch is full</div>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<section class="section" style="padding: 0 0 100px;">
   <div class="wrap">
     <div class="waitlist reveal" id="signup">
       <div id="signup-form-view">
-        <h2>Join at the founding rate.</h2>
-        <p>We're onboarding our first families now at $50, before the standard $75 rate begins. Add your missionary's info below to get started.</p>
+        <h2>Get started, from either side.</h2>
+        <p>Whether you're the missionary getting this set up, or the family who wants everything saved — we're onboarding first families now at $50, before the standard $75 rate begins. Add the missionary's info below to get started.</p>
         <div class="scope-note">
           <strong>What this saves:</strong> every email your missionary sends, voice memos, and the photos they attach directly. We can't capture Google Drive or Google Photos links, and very large emails (lots of high-resolution photos at once) may not go through. We recommend a handful of regular photos per email for the best results.
         </div>
@@ -918,15 +912,13 @@
     </div>
     <div class="fnote">
       Built for missionary families, with care. ·
-      <a href="about.html">Our story</a> ·
-      <a href="faq.html">FAQ</a> ·
-      <a href="security.html">Security</a> ·
       <a href="mailto:tyler@getmissionbridge.com">tyler@getmissionbridge.com</a> ·
       <a href="find-dashboard.html">Lost your dashboard link?</a>
     </div>
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 function updateMissionStatusUI() {
   const status = document.querySelector('input[name="mission-status"]:checked').value;
@@ -1066,62 +1058,229 @@ if ('IntersectionObserver' in window) {
   }, { threshold: 0.15 });
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-  // Count up the trust-strip numbers once they scroll into view -
-  // purely decorative, always ends on the real static number, never
-  // depends on this running (falls back to static text otherwise).
-  const countObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target = parseInt(el.dataset.target, 10);
-      const duration = 900;
-      const start = performance.now();
-      function tick(now) {
-        const progress = Math.min((now - start) / duration, 1);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - progress, 3)));
-        if (progress < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-      countObserver.unobserve(el);
-    });
-  }, { threshold: 0.4 });
-  document.querySelectorAll('.count-up').forEach(el => countObserver.observe(el));
-
-  // Safety net: if the observer never fires for any reason, make sure
-  // the real number shows anyway after a few seconds rather than risk
-  // it being stuck at 0 forever.
-  setTimeout(() => {
-    document.querySelectorAll('.count-up').forEach(el => {
-      if (el.textContent === '0') el.textContent = el.dataset.target;
-    });
-  }, 3000);
 } else {
   document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
-  document.querySelectorAll('.count-up').forEach(el => { el.textContent = el.dataset.target; });
 }
 
-// Real, honest scarcity - fetched from the backend, never fabricated.
-// If this fails for any reason, both elements just stay hidden/as
-// their static fallback text rather than show something untrue.
+// Real, honest scarcity note - kept for parity with the live homepage,
+// even though this preview has no urgency bar to update.
 (async function loadFoundingStatus() {
   try {
     const res = await fetch('https://missionbridge-backend.onrender.com/founding-status');
     if (!res.ok) return;
-    const data = await res.json();
-
-    const bar = document.getElementById('urgency-bar');
-    const note = document.getElementById('founding-note');
-
-    if (data.isFoundingRateActive) {
-      bar.innerHTML = `Missionary accounts are wiped within hours of coming home — with zero warning. <strong>${data.spotsRemaining} spots left</strong> at $50, price rises to $75 after`;
-      if (note) note.textContent = `${data.spotsRemaining} founding spots left at $50 for our first families. $75 once they're gone.`;
-    } else {
-      bar.innerHTML = `Missionary accounts are wiped within hours of coming home — with zero warning. Founding rate is full, current price is <strong>$75</strong>`;
-      if (note) note.textContent = `Our founding rate has sold out. Current price is $75.`;
-    }
+    await res.json();
   } catch (err) {
-    // Fail silently - the page already works fine with the static fallback copy.
+    // Fail silently.
+  }
+})();
+
+// ---- 3D scroll story ----
+(function initThreeStory() {
+  const wrapper = document.getElementById('three-story');
+  const fallback = document.getElementById('three-fallback');
+  const canvas = document.getElementById('three-canvas');
+  const stageEl = wrapper ? wrapper.querySelector('.three-stage') : null;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function showFallback() {
+    if (wrapper) wrapper.style.display = 'none';
+    if (!fallback) return;
+    fallback.style.display = 'block';
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.35 });
+      fallback.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    } else {
+      fallback.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
+    }
+  }
+
+  if (prefersReducedMotion || typeof THREE === 'undefined' || !canvas || !wrapper || !stageEl) {
+    showFallback();
+    return;
+  }
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+  } catch (err) {
+    showFallback();
+    return;
+  }
+  if (!renderer) { showFallback(); return; }
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, 0.4, 5.4);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  const keyLight = new THREE.PointLight(0xffffff, 1.4, 20);
+  keyLight.position.set(3, 3, 4);
+  scene.add(keyLight);
+  const fillLight = new THREE.PointLight(0x2b3a4a, 0.6, 20);
+  fillLight.position.set(-4, -2, -3);
+  scene.add(fillLight);
+
+  const gemGeo = new THREE.IcosahedronGeometry(1.35, 0);
+  const gemMat = new THREE.MeshStandardMaterial({
+    color: 0x2b3a4a, emissive: 0x3d2f18, emissiveIntensity: 0.25,
+    metalness: 0.35, roughness: 0.35, transparent: true, opacity: 1
+  });
+  const gem = new THREE.Mesh(gemGeo, gemMat);
+  scene.add(gem);
+
+  const wireGeo = new THREE.IcosahedronGeometry(1.37, 0);
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.2 });
+  const wire = new THREE.Mesh(wireGeo, wireMat);
+  scene.add(wire);
+
+  const satGeo = new THREE.IcosahedronGeometry(0.11, 0);
+  const satCount = 3;
+  const satellites = [];
+  for (let i = 0; i < satCount; i++) {
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0xB8874A, emissive: 0x6b4d22, emissiveIntensity: 0.4,
+      metalness: 0.4, roughness: 0.4, transparent: true, opacity: 1
+    });
+    const m = new THREE.Mesh(satGeo, mat);
+    scene.add(m);
+    satellites.push({
+      mesh: m,
+      radius: 2.1 + i * 0.28,
+      speed: 0.4 + i * 0.15,
+      phase: i * (Math.PI * 2 / satCount),
+      tilt: 0.25 + i * 0.1
+    });
+  }
+
+  const looks = [
+    { bg: 0x161d24, color: 0x2b3a4a, emissive: 0x3d2f18, emissiveIntensity: 0.25, gemOpacity: 1,    wireOpacity: 0.20, wireColor: 0xffffff, satOpacity: 1, satScale: 1,    rotSpeed: 0.12, shake: 0 },
+    { bg: 0x150d0d, color: 0x1c1414, emissive: 0xff8a73, emissiveIntensity: 0.55, gemOpacity: 0.35, wireOpacity: 0.60, wireColor: 0xff8a73, satOpacity: 0, satScale: 0.3,  rotSpeed: 0.05, shake: 1 },
+    { bg: 0x1b2430, color: 0xB8874A, emissive: 0x6b4d22, emissiveIntensity: 0.35, gemOpacity: 1,    wireOpacity: 0.16, wireColor: 0xffffff, satOpacity: 1, satScale: 1,    rotSpeed: 0.16, shake: 0 },
+    { bg: 0x141b24, color: 0xd7ab72, emissive: 0xB8874A, emissiveIntensity: 0.75, gemOpacity: 1,    wireOpacity: 0.10, wireColor: 0xB8874A, satOpacity: 1, satScale: 1.35, rotSpeed: 0.22, shake: 0 }
+  ];
+
+  const tmpColorA = new THREE.Color();
+  const tmpColorB = new THREE.Color();
+  const bgColor = new THREE.Color(looks[0].bg);
+  scene.background = bgColor;
+
+  const captions = Array.prototype.slice.call(document.querySelectorAll('.three-caption'));
+
+  function resize() {
+    const w = stageEl.clientWidth;
+    const h = stageEl.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function getProgress() {
+    const rect = wrapper.getBoundingClientRect();
+    const total = wrapper.offsetHeight - window.innerHeight;
+    if (total <= 0) return 0;
+    const scrolled = -rect.top;
+    return Math.min(1, Math.max(0, scrolled / total));
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const delta = Math.min(clock.getDelta(), 0.05);
+    const elapsed = clock.getElapsedTime();
+    const progress = getProgress();
+
+    const pos = progress * (looks.length - 1);
+    const idx = Math.min(looks.length - 2, Math.floor(pos));
+    const t = pos - idx;
+    const a = looks[idx];
+    const b = looks[idx + 1];
+
+    tmpColorA.set(a.bg); tmpColorB.set(b.bg);
+    bgColor.copy(tmpColorA).lerp(tmpColorB, t);
+    scene.background = bgColor;
+
+    tmpColorA.set(a.color); tmpColorB.set(b.color);
+    gemMat.color.copy(tmpColorA).lerp(tmpColorB, t);
+    tmpColorA.set(a.emissive); tmpColorB.set(b.emissive);
+    gemMat.emissive.copy(tmpColorA).lerp(tmpColorB, t);
+    gemMat.emissiveIntensity = lerp(a.emissiveIntensity, b.emissiveIntensity, t);
+    gemMat.opacity = lerp(a.gemOpacity, b.gemOpacity, t);
+
+    wireMat.opacity = lerp(a.wireOpacity, b.wireOpacity, t);
+    tmpColorA.set(a.wireColor); tmpColorB.set(b.wireColor);
+    wireMat.color.copy(tmpColorA).lerp(tmpColorB, t);
+
+    const satOpacity = lerp(a.satOpacity, b.satOpacity, t);
+    const satScale = lerp(a.satScale, b.satScale, t);
+    const rotSpeed = lerp(a.rotSpeed, b.rotSpeed, t);
+    const shake = lerp(a.shake, b.shake, t);
+
+    gem.rotation.y += rotSpeed * delta;
+    gem.rotation.x = Math.sin(elapsed * 0.15) * 0.15;
+    wire.rotation.copy(gem.rotation);
+
+    satellites.forEach((s) => {
+      const angle = elapsed * s.speed + s.phase;
+      s.mesh.position.set(
+        Math.cos(angle) * s.radius,
+        Math.sin(angle * 0.8 + s.phase) * s.tilt,
+        Math.sin(angle) * s.radius
+      );
+      s.mesh.scale.setScalar(Math.max(0.001, satScale));
+      s.mesh.material.opacity = satOpacity;
+    });
+
+    const orbitAngle = progress * Math.PI * 0.7 - 0.35;
+    const shakeX = Math.sin(elapsed * 37) * 0.04 * shake;
+    const shakeY = Math.cos(elapsed * 29) * 0.03 * shake;
+    camera.position.x = Math.sin(orbitAngle) * 5.2 + shakeX;
+    camera.position.z = Math.cos(orbitAngle) * 5.2;
+    camera.position.y = 0.3 + Math.sin(elapsed * 0.2) * 0.15 + shakeY;
+    camera.lookAt(0, 0, 0);
+
+    const bandWidth = 1 / captions.length;
+    const fadeMargin = bandWidth * 0.28;
+    captions.forEach((el, i) => {
+      const start = i * bandWidth;
+      const end = start + bandWidth;
+      let opacity = 0;
+      if (progress >= start - fadeMargin && progress <= end + fadeMargin) {
+        if (progress < start + fadeMargin) {
+          opacity = (progress - (start - fadeMargin)) / (2 * fadeMargin);
+        } else if (progress > end - fadeMargin) {
+          opacity = ((end + fadeMargin) - progress) / (2 * fadeMargin);
+        } else {
+          opacity = 1;
+        }
+      }
+      opacity = Math.min(1, Math.max(0, opacity));
+      el.style.opacity = String(opacity);
+      el.style.transform = 'translateY(' + ((1 - opacity) * 16) + 'px)';
+      el.style.pointerEvents = opacity > 0.6 ? 'auto' : 'none';
+    });
+
+    renderer.render(scene, camera);
+  }
+
+  try {
+    animate();
+  } catch (err) {
+    showFallback();
   }
 })();
 </script>
