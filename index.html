@@ -1038,6 +1038,7 @@ async function handleSignup(e) {
       }
       const params = new URLSearchParams({ email: missionaryEmail });
       if (missionaryName) params.set('name', missionaryName);
+      if (data.dashboard_token) params.set('token', data.dashboard_token);
       window.location.href = `welcome.html?${params.toString()}`;
       return;
     } else {

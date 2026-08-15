@@ -396,6 +396,7 @@ function copyDashboardLink(btn) {
   const params = new URLSearchParams(window.location.search);
   const missionaryEmail = params.get('email');
   const missionaryName = params.get('name');
+  const dashboardToken = params.get('token');
 
   if (!missionaryEmail) {
     document.getElementById('missing-view').style.display = 'block';
@@ -404,7 +405,12 @@ function copyDashboardLink(btn) {
 
   document.getElementById('confirm-view').style.display = 'block';
 
-  const dashboardUrl = `dashboard.html?email=${encodeURIComponent(missionaryEmail)}`;
+  // Prefer the private token link when we have one (not guessable the
+  // way an email address is) - falls back to the email-based link
+  // otherwise so this never breaks.
+  const dashboardUrl = dashboardToken
+    ? `dashboard.html?token=${encodeURIComponent(dashboardToken)}`
+    : `dashboard.html?email=${encodeURIComponent(missionaryEmail)}`;
   document.getElementById('dashboard-link').href = dashboardUrl;
 
   if (missionaryName) {

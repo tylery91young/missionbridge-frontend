@@ -365,17 +365,23 @@
 <script>
 const BACKEND = 'https://missionbridge-backend.onrender.com';
 
-// Get missionary email from URL, e.g. dashboard.html?email=elder@missionary.org
+// Dashboard can be reached either the old way (?email=their-address)
+// or the new, private way (?token=their-dashboard-token). Both keep
+// working - existing emailed links never break - but new signups get
+// a token link going forward, which isn't guessable the way an email
+// address is.
 const params = new URLSearchParams(window.location.search);
-const missionaryEmail = params.get('email');
+const missionaryEmailParam = params.get('email');
+const dashboardToken = params.get('token');
 const isAdminPreview = params.get('adminPreview') === '1';
 
 let allMoments = [];
 let currentFilter = 'all';
+let resolvedMissionaryEmail = missionaryEmailParam; // filled in from the response if we arrived via token
 const allowDownloads = true; // the link itself is the only access control now - see link-security-note
 
 async function loadDashboard() {
-  if (!missionaryEmail) {
+  if (!missionaryEmailParam && !dashboardToken) {
     document.getElementById('content').innerHTML = `
       <div class="empty-state">
         <h2>No missionary specified</h2>
@@ -385,20 +391,24 @@ async function loadDashboard() {
   }
 
   try {
-    const res = await fetch(`${BACKEND}/dashboard/${encodeURIComponent(missionaryEmail)}${isAdminPreview ? '?adminPreview=1' : ''}`);
+    const url = dashboardToken
+      ? `${BACKEND}/dashboard/by-token/${encodeURIComponent(dashboardToken)}${isAdminPreview ? '?adminPreview=1' : ''}`
+      : `${BACKEND}/dashboard/${encodeURIComponent(missionaryEmailParam)}${isAdminPreview ? '?adminPreview=1' : ''}`;
+    const res = await fetch(url);
     const data = await res.json();
 
     allMoments = data.moments || [];
+    resolvedMissionaryEmail = data.missionary?.missionary_email || missionaryEmailParam;
 
-    const name = data.missionary?.missionary_name || data.missionary?.missionary_email || missionaryEmail;
+    const name = data.missionary?.missionary_name || resolvedMissionaryEmail || 'Their';
     document.getElementById('missionary-title').textContent = name + "'s Mission Archive";
     document.getElementById('stat-moments').textContent = data.totalMoments;
     document.getElementById('stat-photos').textContent = data.totalPhotos;
     document.getElementById('stat-audio').textContent = data.totalAudio;
 
-    document.getElementById('dl-all').href = `${BACKEND}/download/${encodeURIComponent(missionaryEmail)}?type=all`;
-    document.getElementById('dl-photos').href = `${BACKEND}/download/${encodeURIComponent(missionaryEmail)}?type=photos`;
-    document.getElementById('dl-emails').href = `${BACKEND}/download/${encodeURIComponent(missionaryEmail)}?type=emails`;
+    document.getElementById('dl-all').href = `${BACKEND}/download/${encodeURIComponent(resolvedMissionaryEmail)}?type=all`;
+    document.getElementById('dl-photos').href = `${BACKEND}/download/${encodeURIComponent(resolvedMissionaryEmail)}?type=photos`;
+    document.getElementById('dl-emails').href = `${BACKEND}/download/${encodeURIComponent(resolvedMissionaryEmail)}?type=emails`;
 
     renderMoments();
   } catch (err) {
@@ -519,7 +529,7 @@ async function deleteAttachment(attachmentId) {
   if (!confirmed) return;
 
   try {
-    await fetch(`${BACKEND}/dashboard/attachment/${attachmentId}`, { method: 'DELETE' });
+    await fetch(`${BACKEND}/dashboard/attachment/${attachmentId}?missionaryEmail=${encodeURIComponent(resolvedMissionaryEmail)}`, { method: 'DELETE' });
     await loadDashboard();
   } catch (err) {
     alert('Something went wrong deleting this. Please try again.');
@@ -531,7 +541,7 @@ async function deleteEmail(emailId) {
   if (!confirmed) return;
 
   try {
-    await fetch(`${BACKEND}/dashboard/email/${emailId}`, { method: 'DELETE' });
+    await fetch(`${BACKEND}/dashboard/email/${emailId}?missionaryEmail=${encodeURIComponent(resolvedMissionaryEmail)}`, { method: 'DELETE' });
     await loadDashboard();
   } catch (err) {
     alert('Something went wrong deleting this. Please try again.');

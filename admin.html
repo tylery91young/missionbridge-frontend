@@ -300,6 +300,7 @@ async function loadOverview(isLoginAttempt = false) {
       <div class="stat-card"><div class="label">Revenue</div><div class="value">$${data.totalRevenue.toFixed(0)}</div></div>
       <div class="stat-card"><div class="label">Expenditures</div><div class="value">$${data.totalExpenditures.toFixed(0)}</div></div>
       <div class="stat-card"><div class="label">Net Profit</div><div class="value" style="color: ${data.netProfit >= 0 ? 'var(--green)' : 'var(--red)'}">$${data.netProfit.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="label">Net Profit (after est. Stripe fees)</div><div class="value" style="color: ${data.netProfitAfterFees >= 0 ? 'var(--green)' : 'var(--red)'}">$${data.netProfitAfterFees.toFixed(0)}</div><div class="sub">~$${data.estimatedStripeFees.toFixed(2)} estimated fees</div></div>
       <div class="stat-card"><div class="label">Updates Captured</div><div class="value">${data.totalEmailsCaptured}</div></div>
       <div class="stat-card"><div class="label">Waitlist</div><div class="value">${data.waitlistSignups}</div></div>
       <div class="stat-card">
