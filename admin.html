@@ -264,6 +264,27 @@
         <tr><td colspan="5" class="empty-row">Loading…</td></tr>
       </tbody>
     </table>
+
+    <h2 class="section-title">Referral Payouts (Operation Wildfire)</h2>
+    <p class="section-hint">
+      $10 owed each time someone signs up using another customer's referral code. Pay out via PayPal, then mark paid.
+      <span id="referral-total"></span>
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Owed To</th>
+          <th>Their Code</th>
+          <th>Referred</th>
+          <th>Amount</th>
+          <th>Earned</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="referrals-body">
+        <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -315,6 +336,7 @@ async function loadOverview(isLoginAttempt = false) {
     loadDashboardActivity();
     loadEmailLog();
     loadDetectedIssues();
+    loadReferrals();
   } catch (err) {
     if (isLoginAttempt) document.getElementById('gate-error').textContent = 'Could not connect. Try again.';
   }
@@ -611,6 +633,42 @@ async function loadDetectedIssues() {
     `).join('');
   } catch (err) {
     document.getElementById('issues-body').innerHTML = `<tr><td colspan="5" class="empty-row">Error loading issues.</td></tr>`;
+  }
+}
+
+async function loadReferrals() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/referrals?key=${encodeURIComponent(adminKey)}`);
+    const data = await res.json();
+
+    document.getElementById('referral-total').textContent = `Total owed: $${data.totalOwed.toFixed(2)}`;
+
+    if (data.credits.length === 0) {
+      document.getElementById('referrals-body').innerHTML = `<tr><td colspan="6" class="empty-row">No referrals yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('referrals-body').innerHTML = data.credits.map(c => `
+      <tr>
+        <td data-label="Owed To">${c.owner_name || c.owner_family_email}</td>
+        <td data-label="Their Code">${c.referral_code || '—'}</td>
+        <td data-label="Referred">${c.referred_name || '—'}</td>
+        <td data-label="Amount">$${parseFloat(c.amount).toFixed(2)}</td>
+        <td data-label="Earned">${new Date(c.created_at).toLocaleDateString()}</td>
+        <td data-label="Status">${c.paid_out ? 'Paid' : `<button class="icon-btn" onclick="markReferralPaid(${c.id})" title="Mark as paid">Mark paid</button>`}</td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('referrals-body').innerHTML = `<tr><td colspan="6" class="empty-row">Error loading referrals.</td></tr>`;
+  }
+}
+
+async function markReferralPaid(id) {
+  try {
+    await fetch(`${BACKEND}/admin/referrals/${id}/mark-paid?key=${encodeURIComponent(adminKey)}`, { method: 'POST' });
+    loadReferrals();
+  } catch (err) {
+    alert('Something went wrong marking this paid. Please try again.');
   }
 }
 
