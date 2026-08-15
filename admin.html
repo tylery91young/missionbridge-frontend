@@ -311,10 +311,13 @@ async function loadOverview(isLoginAttempt = false) {
 
     document.getElementById('last-checked').textContent = 'Last checked: ' + new Date(data.systemHealth.checkedAt).toLocaleString();
 
-    document.getElementById('health-row').innerHTML = `
-      <div class="health-pill"><span class="health-dot ${data.systemHealth.database === 'ok' ? '' : 'error'}"></span>Database: ${data.systemHealth.database}</div>
-      <div class="health-pill"><span class="health-dot"></span>Server: ${data.systemHealth.server}</div>
-    `;
+    document.getElementById('health-row').innerHTML = Object.values(data.systemHealth.checks).map(c => `
+      <div class="health-pill" title="${c.detail ? c.detail.replace(/"/g, '&quot;') : ''}">
+        <span class="health-dot ${c.ok ? '' : 'error'}"></span>${c.label}${c.ok ? '' : ' — ' + (c.detail || 'failing')}
+      </div>
+    `).join('') + (data.systemHealth.allOk
+      ? ''
+      : `<div class="health-pill" style="border-color: var(--red); color: var(--red);">⚠ Tyler gets emailed automatically when this changes</div>`);
 
     document.getElementById('stats-grid').innerHTML = `
       <div class="stat-card"><div class="label">Customers</div><div class="value">${data.totalCustomers}</div></div>
