@@ -285,6 +285,33 @@
         <tr><td colspan="6" class="empty-row">Loading…</td></tr>
       </tbody>
     </table>
+
+    <h2 class="section-title">Site Traffic (last 30 days)</h2>
+    <p class="section-hint">
+      First-party only — never sent to a third party, same as promised on the Security page.
+      <span id="analytics-summary"></span>
+    </p>
+    <div class="stats-grid" id="analytics-summary-grid" style="margin-bottom: 24px;"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <div>
+        <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Pages</h3>
+        <table>
+          <thead><tr><th>Page</th><th>Views</th><th>Unique</th></tr></thead>
+          <tbody id="analytics-pages-body">
+            <tr><td colspan="3" class="empty-row">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Sources</h3>
+        <table>
+          <thead><tr><th>Source</th><th>Views</th></tr></thead>
+          <tbody id="analytics-sources-body">
+            <tr><td colspan="2" class="empty-row">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -340,6 +367,7 @@ async function loadOverview(isLoginAttempt = false) {
     loadEmailLog();
     loadDetectedIssues();
     loadReferrals();
+    loadAnalytics();
   } catch (err) {
     if (isLoginAttempt) document.getElementById('gate-error').textContent = 'Could not connect. Try again.';
   }
@@ -672,6 +700,40 @@ async function markReferralPaid(id) {
     loadReferrals();
   } catch (err) {
     alert('Something went wrong marking this paid. Please try again.');
+  }
+}
+
+async function loadAnalytics() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/analytics?key=${encodeURIComponent(adminKey)}&days=30`);
+    const data = await res.json();
+
+    document.getElementById('analytics-summary-grid').innerHTML = `
+      <div class="stat-card"><div class="label">Page Views</div><div class="value">${data.totalViews}</div></div>
+      <div class="stat-card"><div class="label">Unique Visitors</div><div class="value">${data.uniqueVisitors}</div></div>
+    `;
+
+    document.getElementById('analytics-pages-body').innerHTML = data.byPage.length
+      ? data.byPage.map(p => `
+          <tr>
+            <td data-label="Page">${p.path}</td>
+            <td data-label="Views">${p.views}</td>
+            <td data-label="Unique">${p.unique_visitors}</td>
+          </tr>
+        `).join('')
+      : `<tr><td colspan="3" class="empty-row">No views yet.</td></tr>`;
+
+    document.getElementById('analytics-sources-body').innerHTML = data.bySource.length
+      ? data.bySource.map(s => `
+          <tr>
+            <td data-label="Source">${s.source}</td>
+            <td data-label="Views">${s.views}</td>
+          </tr>
+        `).join('')
+      : `<tr><td colspan="2" class="empty-row">No views yet.</td></tr>`;
+  } catch (err) {
+    document.getElementById('analytics-pages-body').innerHTML = `<tr><td colspan="3" class="empty-row">Error loading analytics.</td></tr>`;
+    document.getElementById('analytics-sources-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
   }
 }
 

@@ -171,5 +171,37 @@
 </footer>
 
 
+<script>
+// First-party page tracking - stays on our own server, never sent to
+// a third party. Just tells us which pages get visited and roughly
+// where traffic came from, so we know what's working.
+(function () {
+  try {
+    let visitorId = localStorage.getItem('mb_visitor_id');
+    if (!visitorId) {
+      visitorId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      localStorage.setItem('mb_visitor_id', visitorId);
+    }
+    const params = new URLSearchParams(window.location.search);
+    let referrer = 'Direct';
+    if (document.referrer) {
+      try { referrer = new URL(document.referrer).hostname || 'Direct'; } catch (e) {}
+    }
+    fetch('https://missionbridge-backend.onrender.com/track/pageview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        path: window.location.pathname,
+        referrer,
+        utmSource: params.get('utm_source'),
+        utmMedium: params.get('utm_medium'),
+        utmCampaign: params.get('utm_campaign'),
+        visitorId,
+      }),
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+
 </body>
 </html>
