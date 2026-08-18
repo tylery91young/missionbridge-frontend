@@ -59,6 +59,7 @@
   .health-dot.error { background: var(--red); }
 
   .section-title { font-size: 18px; color: var(--navy); margin: 32px 0 14px; }
+  .section-title:first-child { margin-top: 0; }
   .section-hint { font-size: 13px; color: var(--sage); margin: -8px 0 14px; }
 
   table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
@@ -103,8 +104,59 @@
     background: var(--navy); color: var(--cream); border: none; padding: 8px 18px;
     border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 16px;
   }
+  .refresh-btn.secondary { background: var(--sage); }
 
   .empty-row { text-align: center; color: var(--sage); padding: 30px; }
+
+  /* TABS */
+  .tab-bar {
+    display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid var(--line); margin-bottom: 24px;
+  }
+  .tab-btn {
+    background: none; border: none; padding: 12px 16px; font-size: 14px; font-weight: 600;
+    color: var(--sage); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent;
+    display: inline-flex; align-items: center; gap: 7px; font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--clay); }
+  .tab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--red); color: white; font-size: 11px; font-weight: 700;
+    min-width: 18px; height: 18px; border-radius: 100px; padding: 0 5px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .attention-grid .stat-card { cursor: pointer; }
+  .attention-grid .stat-card:hover { background: white; box-shadow: 0 2px 8px rgba(23,27,33,0.06); }
+
+  /* ADD CUSTOMER */
+  .add-customer-box { background: var(--cream-warm); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+  .add-customer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
+  .add-customer-box input, .add-customer-box select {
+    padding: 9px 14px; border: 1px solid var(--line); border-radius: 100px; font-size: 13.5px;
+    font-family: inherit; background: white; width: 100%;
+  }
+  .add-customer-box label.checkbox-label {
+    display: flex; align-items: center; gap: 8px; font-size: 13.5px; margin-bottom: 14px;
+  }
+  .add-customer-box label.checkbox-label input { width: auto; }
+
+  /* TO-DOS */
+  .todo-add-row { display: flex; gap: 8px; margin-bottom: 18px; }
+  .todo-add-row input {
+    flex: 1; padding: 10px 16px; border: 1px solid var(--line); border-radius: 100px;
+    font-size: 14px; font-family: inherit;
+  }
+  .todo-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: white;
+    border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px;
+  }
+  .todo-item.done { opacity: 0.5; }
+  .todo-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+  .todo-item .todo-text { flex: 1; font-size: 14px; }
+  .todo-item.done .todo-text { text-decoration: line-through; }
+  .todo-item .todo-source { font-size: 11px; color: var(--sage); white-space: nowrap; }
 
   @media (max-width: 700px) {
     table, thead, tbody, th, td, tr { display: block; }
@@ -162,154 +214,237 @@
   </header>
 
   <div class="wrap">
-    <div class="health-row" id="health-row"></div>
-
-    <div class="stats-grid" id="stats-grid"></div>
-
-    <h2 class="section-title">Customers</h2>
-    <button class="refresh-btn" onclick="loadCustomers()">Refresh</button>
-    <div style="overflow-x: auto; border-radius: 12px;">
-    <table>
-      <thead>
-        <tr>
-          <th>Missionary</th>
-          <th>Family Email</th>
-          <th>Phone</th>
-          <th>Expected Return</th>
-          <th>Signed Up</th>
-          <th>Updates</th>
-          <th>Storage</th>
-          <th>Paid</th>
-          <th>Notes</th>
-          <th>⚠️</th>
-          <th style="min-width: 160px;">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="customers-body">
-        <tr><td colspan="11" class="empty-row">Loading…</td></tr>
-      </tbody>
-    </table>
+    <div class="tab-bar" id="tab-bar">
+      <button class="tab-btn active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" data-tab="customers" onclick="showTab('customers')">Customers</button>
+      <button class="tab-btn" data-tab="todos" onclick="showTab('todos')">To-Dos <span class="tab-badge" id="todo-badge" style="display:none;"></span></button>
+      <button class="tab-btn" data-tab="expenditures" onclick="showTab('expenditures')">Expenditures</button>
+      <button class="tab-btn" data-tab="activity" onclick="showTab('activity')">Activity</button>
+      <button class="tab-btn" data-tab="issues" onclick="showTab('issues')">Issues</button>
+      <button class="tab-btn" data-tab="emails" onclick="showTab('emails')">Email Log</button>
+      <button class="tab-btn" data-tab="referrals" onclick="showTab('referrals')">Referrals</button>
+      <button class="tab-btn" data-tab="traffic" onclick="showTab('traffic')">Traffic</button>
     </div>
 
-    <h2 class="section-title">Expenditures</h2>
-    <div class="expenditure-form">
-      <input type="text" id="exp-description" placeholder="What did you spend on?">
-      <input type="number" id="exp-amount" placeholder="Amount" step="0.01">
-      <input type="text" id="exp-category" placeholder="Category (optional)">
-      <button class="refresh-btn" onclick="addExpenditure()">Add</button>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Category</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="expenditures-body">
-        <tr><td colspan="5" class="empty-row">Loading…</td></tr>
-      </tbody>
-    </table>
+    <!-- DASHBOARD TAB -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <div class="health-row" id="health-row"></div>
+      <div class="stats-grid" id="stats-grid"></div>
 
-    <h2 class="section-title">Dashboard Activity</h2>
-    <p class="section-hint">Who's actually checking in, and how recently.</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Missionary Email</th>
-          <th>Total Views</th>
-          <th>Last Viewed</th>
-        </tr>
-      </thead>
-      <tbody id="activity-body">
-        <tr><td colspan="3" class="empty-row">Loading…</td></tr>
-      </tbody>
-    </table>
-
-    <h2 class="section-title">Detected Content Issues</h2>
-    <p class="section-hint">Missionary emails containing links we couldn't save automatically (Drive, Photos, etc).</p>
-    <table>
-      <thead>
-        <tr>
-          <th>From</th>
-          <th>Subject</th>
-          <th>Issue Type</th>
-          <th>Mostly Just a Link?</th>
-          <th>Received</th>
-        </tr>
-      </thead>
-      <tbody id="issues-body">
-        <tr><td colspan="5" class="empty-row">Loading…</td></tr>
-      </tbody>
-    </table>
-
-    <h2 class="section-title">Email Log</h2>
-    <p class="section-hint">
-      Every email we've sent, most recent first.
-      <span id="email-failure-count"></span>
-    </p>
-    <table>
-      <thead>
-        <tr>
-          <th>Recipient</th>
-          <th>Type</th>
-          <th>Subject</th>
-          <th>Status</th>
-          <th>Sent</th>
-        </tr>
-      </thead>
-      <tbody id="email-log-body">
-        <tr><td colspan="5" class="empty-row">Loading…</td></tr>
-      </tbody>
-    </table>
-
-    <h2 class="section-title">Referral Payouts (Operation Wildfire)</h2>
-    <p class="section-hint">
-      $10 owed each time someone signs up using another customer's referral code. Pay out via PayPal, then mark paid.
-      <span id="referral-total"></span>
-    </p>
-    <table>
-      <thead>
-        <tr>
-          <th>Owed To</th>
-          <th>Their Code</th>
-          <th>Referred</th>
-          <th>Amount</th>
-          <th>Earned</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="referrals-body">
-        <tr><td colspan="6" class="empty-row">Loading…</td></tr>
-      </tbody>
-    </table>
-
-    <h2 class="section-title">Site Traffic (last 30 days)</h2>
-    <p class="section-hint">
-      First-party only — never sent to a third party, same as promised on the Security page.
-      <span id="analytics-summary"></span>
-    </p>
-    <div class="stats-grid" id="analytics-summary-grid" style="margin-bottom: 24px;"></div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-      <div>
-        <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Pages</h3>
-        <table>
-          <thead><tr><th>Page</th><th>Views</th><th>Unique</th></tr></thead>
-          <tbody id="analytics-pages-body">
-            <tr><td colspan="3" class="empty-row">Loading…</td></tr>
-          </tbody>
-        </table>
+      <h2 class="section-title">Needs Your Attention</h2>
+      <div class="stats-grid attention-grid">
+        <div class="stat-card" onclick="showTab('todos')"><div class="label">Open To-Dos</div><div class="value" id="dash-todo-count">—</div></div>
+        <div class="stat-card" onclick="showTab('referrals')"><div class="label">Referral $ Owed</div><div class="value" id="dash-referral-owed">—</div></div>
+        <div class="stat-card" onclick="showTab('issues')"><div class="label">Detected Issues</div><div class="value" id="dash-issues-count">—</div></div>
+        <div class="stat-card" onclick="showTab('emails')"><div class="label">Email Failures</div><div class="value" id="dash-email-failures">—</div></div>
       </div>
-      <div>
-        <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Sources</h3>
-        <table>
-          <thead><tr><th>Source</th><th>Views</th></tr></thead>
-          <tbody id="analytics-sources-body">
-            <tr><td colspan="2" class="empty-row">Loading…</td></tr>
-          </tbody>
-        </table>
+    </div>
+
+    <!-- CUSTOMERS TAB -->
+    <div class="tab-panel" id="tab-customers">
+      <h2 class="section-title">Customers</h2>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="refresh-btn" onclick="loadCustomers()">Refresh</button>
+        <button class="refresh-btn secondary" onclick="toggleAddCustomer()">+ Add customer manually</button>
+      </div>
+
+      <div class="add-customer-box" id="add-customer-box" style="display:none;">
+        <p class="section-hint" style="margin-top:0;">Creates the account directly - no Stripe checkout. Use $0 for a fully comped account, or any custom amount for a personal discount.</p>
+        <div class="add-customer-grid">
+          <input type="text" id="ac-missionary-name" placeholder="Missionary name">
+          <input type="email" id="ac-missionary-email" placeholder="Missionary email *">
+          <input type="email" id="ac-family-email" placeholder="Family email *">
+          <input type="text" id="ac-family-phone" placeholder="Family phone">
+          <input type="date" id="ac-expected-return">
+          <input type="date" id="ac-mission-start">
+          <select id="ac-mission-status">
+            <option value="serving">Already serving</option>
+            <option value="not_yet_left">Not yet left</option>
+          </select>
+          <input type="number" id="ac-paid-amount" step="0.01" placeholder="Amount paid" value="0">
+        </div>
+        <input type="text" id="ac-notes" placeholder="Notes (optional) — why this account was comped/discounted" style="margin-bottom:14px;">
+        <label class="checkbox-label">
+          <input type="checkbox" id="ac-send-emails" checked> Send the normal welcome emails now
+        </label>
+        <div style="display:flex; gap:10px;">
+          <button class="refresh-btn" style="margin-bottom:0;" onclick="submitManualCustomer()">Create customer</button>
+          <button class="refresh-btn secondary" style="margin-bottom:0;" onclick="toggleAddCustomer(false)">Cancel</button>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto; border-radius: 12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Missionary</th>
+            <th>Family Email</th>
+            <th>Phone</th>
+            <th>Expected Return</th>
+            <th>Signed Up</th>
+            <th>Updates</th>
+            <th>Storage</th>
+            <th>Paid</th>
+            <th>Notes</th>
+            <th>⚠️</th>
+            <th style="min-width: 160px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="customers-body">
+          <tr><td colspan="11" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- TO-DOS TAB -->
+    <div class="tab-panel" id="tab-todos">
+      <h2 class="section-title">Business To-Do List</h2>
+      <p class="section-hint">Things to follow up on or build next. Add as you think of them — Claude can add to this too as we talk through ideas.</p>
+      <div class="todo-add-row">
+        <input type="text" id="todo-text" placeholder="Add a task…" onkeydown="if(event.key==='Enter') addTodo()">
+        <button class="refresh-btn" style="margin-bottom:0;" onclick="addTodo()">Add</button>
+      </div>
+      <div id="todos-list"><p class="section-hint">Loading…</p></div>
+    </div>
+
+    <!-- EXPENDITURES TAB -->
+    <div class="tab-panel" id="tab-expenditures">
+      <h2 class="section-title">Expenditures</h2>
+      <div class="expenditure-form">
+        <input type="text" id="exp-description" placeholder="What did you spend on?">
+        <input type="number" id="exp-amount" placeholder="Amount" step="0.01">
+        <input type="text" id="exp-category" placeholder="Category (optional)">
+        <button class="refresh-btn" onclick="addExpenditure()">Add</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="expenditures-body">
+          <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ACTIVITY TAB -->
+    <div class="tab-panel" id="tab-activity">
+      <h2 class="section-title">Dashboard Activity</h2>
+      <p class="section-hint">Who's actually checking in, and how recently.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Missionary Email</th>
+            <th>Total Views</th>
+            <th>Last Viewed</th>
+          </tr>
+        </thead>
+        <tbody id="activity-body">
+          <tr><td colspan="3" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ISSUES TAB -->
+    <div class="tab-panel" id="tab-issues">
+      <h2 class="section-title">Detected Content Issues</h2>
+      <p class="section-hint">Missionary emails containing links we couldn't save automatically (Drive, Photos, etc).</p>
+      <table>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Issue Type</th>
+            <th>Mostly Just a Link?</th>
+            <th>Received</th>
+          </tr>
+        </thead>
+        <tbody id="issues-body">
+          <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- EMAIL LOG TAB -->
+    <div class="tab-panel" id="tab-emails">
+      <h2 class="section-title">Email Log</h2>
+      <p class="section-hint">
+        Every email we've sent, most recent first.
+        <span id="email-failure-count"></span>
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Recipient</th>
+            <th>Type</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Sent</th>
+          </tr>
+        </thead>
+        <tbody id="email-log-body">
+          <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- REFERRALS TAB -->
+    <div class="tab-panel" id="tab-referrals">
+      <h2 class="section-title">Referral Payouts (Operation Wildfire)</h2>
+      <p class="section-hint">
+        $10 owed each time someone signs up using another customer's referral code. Pay out via PayPal, then mark paid.
+        <span id="referral-total"></span>
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Owed To</th>
+            <th>Their Code</th>
+            <th>Referred</th>
+            <th>Amount</th>
+            <th>Earned</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="referrals-body">
+          <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TRAFFIC TAB -->
+    <div class="tab-panel" id="tab-traffic">
+      <h2 class="section-title">Site Traffic (last 30 days)</h2>
+      <p class="section-hint">
+        First-party only — never sent to a third party, same as promised on the Security page.
+        <span id="analytics-summary"></span>
+      </p>
+      <div class="stats-grid" id="analytics-summary-grid" style="margin-bottom: 24px;"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+          <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Pages</h3>
+          <table>
+            <thead><tr><th>Page</th><th>Views</th><th>Unique</th></tr></thead>
+            <tbody id="analytics-pages-body">
+              <tr><td colspan="3" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Sources</h3>
+          <table>
+            <thead><tr><th>Source</th><th>Views</th></tr></thead>
+            <tbody id="analytics-sources-body">
+              <tr><td colspan="2" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -318,6 +453,12 @@
 <script>
 const BACKEND = 'https://missionbridge-backend.onrender.com';
 let adminKey = '';
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  window.scrollTo({ top: 0 });
+}
 
 function checkKey() {
   adminKey = document.getElementById('admin-key-input').value;
@@ -368,6 +509,7 @@ async function loadOverview(isLoginAttempt = false) {
     loadDetectedIssues();
     loadReferrals();
     loadAnalytics();
+    loadTodos();
   } catch (err) {
     if (isLoginAttempt) document.getElementById('gate-error').textContent = 'Could not connect. Try again.';
   }
@@ -434,6 +576,53 @@ async function loadCustomers() {
 
 function escapeAttr(str) {
   return String(str).replace(/'/g, "\\'");
+}
+
+function toggleAddCustomer(show) {
+  const box = document.getElementById('add-customer-box');
+  box.style.display = (show === false || box.style.display === 'block') ? 'none' : 'block';
+}
+
+async function submitManualCustomer() {
+  const missionaryName = document.getElementById('ac-missionary-name').value.trim();
+  const missionaryEmail = document.getElementById('ac-missionary-email').value.trim();
+  const familyEmail = document.getElementById('ac-family-email').value.trim();
+  const familyPhone = document.getElementById('ac-family-phone').value.trim();
+  const expectedReturnDate = document.getElementById('ac-expected-return').value;
+  const missionStartDate = document.getElementById('ac-mission-start').value;
+  const missionStatus = document.getElementById('ac-mission-status').value;
+  const paidAmount = document.getElementById('ac-paid-amount').value;
+  const notes = document.getElementById('ac-notes').value.trim();
+  const sendEmails = document.getElementById('ac-send-emails').checked;
+
+  if (!missionaryEmail || !familyEmail) {
+    alert('Missionary email and family email are both required.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND}/admin/customers/manual`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+      body: JSON.stringify({
+        missionaryName, missionaryEmail, familyEmail, familyPhone,
+        expectedReturnDate, missionStartDate, missionStatus, paidAmount, notes, sendEmails,
+      })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(`Customer created.${data.dashboardUrl ? '\n\nDashboard: ' + data.dashboardUrl : ''}${data.referralCode ? '\nReferral code: ' + data.referralCode : ''}`);
+      ['ac-missionary-name', 'ac-missionary-email', 'ac-family-email', 'ac-family-phone', 'ac-expected-return', 'ac-mission-start', 'ac-notes'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('ac-paid-amount').value = '0';
+      toggleAddCustomer(false);
+      loadCustomers();
+      loadOverview();
+    } else {
+      alert(data.error || 'Something went wrong creating this customer.');
+    }
+  } catch (err) {
+    alert('Something went wrong creating this customer.');
+  }
 }
 
 async function kickCustomer(id, name) {
@@ -648,6 +837,9 @@ async function loadDetectedIssues() {
     const res = await fetch(`${BACKEND}/admin/detected-issues?key=${encodeURIComponent(adminKey)}`);
     const issues = await res.json();
 
+    const dashCount = document.getElementById('dash-issues-count');
+    if (dashCount) dashCount.textContent = issues.length;
+
     if (issues.length === 0) {
       document.getElementById('issues-body').innerHTML = `<tr><td colspan="5" class="empty-row">No issues detected yet.</td></tr>`;
       return;
@@ -673,6 +865,8 @@ async function loadReferrals() {
     const data = await res.json();
 
     document.getElementById('referral-total').textContent = `Total owed: $${data.totalOwed.toFixed(2)}`;
+    const dashOwed = document.getElementById('dash-referral-owed');
+    if (dashOwed) dashOwed.textContent = `$${data.totalOwed.toFixed(2)}`;
 
     if (data.credits.length === 0) {
       document.getElementById('referrals-body').innerHTML = `<tr><td colspan="6" class="empty-row">No referrals yet.</td></tr>`;
@@ -749,6 +943,8 @@ async function loadEmailLog() {
     } else {
       failureSpan.textContent = ' No failures so far.';
     }
+    const dashFailures = document.getElementById('dash-email-failures');
+    if (dashFailures) dashFailures.textContent = data.totalFailures;
 
     if (data.emails.length === 0) {
       document.getElementById('email-log-body').innerHTML = `<tr><td colspan="5" class="empty-row">No emails sent yet.</td></tr>`;
@@ -795,6 +991,63 @@ function renderEngagement(e) {
   else if (e.opened_at) parts.push(`<span title="Opened ${new Date(e.opened_at).toLocaleString()}" style="margin-left: 6px;">👀</span>`);
   if (e.clicked_at) parts.push(`<span title="Clicked ${new Date(e.clicked_at).toLocaleString()}" style="margin-left: 4px;">🔗</span>`);
   return parts.join('');
+}
+
+async function loadTodos() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/todos?key=${encodeURIComponent(adminKey)}`);
+    const todos = await res.json();
+
+    const openCount = todos.filter(t => !t.is_done).length;
+    const badge = document.getElementById('todo-badge');
+    if (openCount > 0) {
+      badge.textContent = openCount;
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+    const dashCount = document.getElementById('dash-todo-count');
+    if (dashCount) dashCount.textContent = openCount;
+
+    if (todos.length === 0) {
+      document.getElementById('todos-list').innerHTML = `<p class="section-hint">Nothing on the list yet.</p>`;
+      return;
+    }
+
+    document.getElementById('todos-list').innerHTML = todos.map(t => `
+      <div class="todo-item ${t.is_done ? 'done' : ''}">
+        <input type="checkbox" ${t.is_done ? 'checked' : ''} onchange="toggleTodo(${t.id})">
+        <div class="todo-text">${t.text}</div>
+        <div class="todo-source">${t.created_by === 'claude' ? '🤖 Claude' : ''}</div>
+        <button class="icon-btn danger" onclick="deleteTodo(${t.id})" title="Delete">🗑️</button>
+      </div>
+    `).join('');
+  } catch (err) {
+    document.getElementById('todos-list').innerHTML = `<p class="section-hint">Error loading to-dos.</p>`;
+  }
+}
+
+async function addTodo() {
+  const input = document.getElementById('todo-text');
+  const text = input.value.trim();
+  if (!text) return;
+  await fetch(`${BACKEND}/admin/todos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+    body: JSON.stringify({ text, createdBy: 'tyler' })
+  });
+  input.value = '';
+  loadTodos();
+}
+
+async function toggleTodo(id) {
+  await fetch(`${BACKEND}/admin/todos/${id}/toggle`, { method: 'POST', headers: { 'x-admin-key': adminKey } });
+  loadTodos();
+}
+
+async function deleteTodo(id) {
+  await fetch(`${BACKEND}/admin/todos/${id}`, { method: 'DELETE', headers: { 'x-admin-key': adminKey } });
+  loadTodos();
 }
 </script>
 
