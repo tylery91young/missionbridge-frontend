@@ -239,9 +239,29 @@
   .missing-state h2 { color: var(--navy); margin-bottom: 12px; }
   .missing-state p { color: rgba(54,51,48,0.7); margin-bottom: 22px; }
 
+  /* ---------- OPTIONAL DETAILS (post-payment) ---------- */
+  .details-card {
+    background: var(--cream-warm);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 26px;
+    margin-top: 28px;
+  }
+  .details-card h3 { font-size: 18px; color: var(--navy); margin-bottom: 6px; }
+  .details-card > p { font-size: 14.5px; color: rgba(54,51,48,0.7); margin-bottom: 18px; max-width: 520px; }
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  .details-grid input {
+    width: 100%; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 14.5px; background: white; color: var(--charcoal);
+  }
+  .date-label-sm { display: block; font-size: 12.5px; color: var(--sage-deep); margin-bottom: 5px; font-weight: 600; }
+  .details-actions { display: flex; align-items: center; gap: 16px; }
+  .details-msg { font-size: 13.5px; margin-top: 10px; }
+
   @media (max-width: 640px) {
     .step { grid-template-columns: 28px 1fr; gap: 14px; }
     .dash-explainer { padding: 26px 20px; }
+    .details-grid { grid-template-columns: 1fr; }
   }
 
   button:focus-visible, a:focus-visible {
@@ -359,6 +379,28 @@
       <p><strong>There's no password.</strong> This exact link is the only way anyone sees this dashboard, so bookmark it somewhere you'll remember and only share it with people you trust.</p>
     </div>
 
+    <div class="details-card" id="details-card">
+      <h3>A couple more things (optional)</h3>
+      <p>Takes about 30 seconds. The mission dates especially help — that's what we use to time the photo-backup reminder email so it lands before their account gets wiped. Skip it if you're in a hurry; you can always email us this later.</p>
+      <div class="details-grid">
+        <input type="text" id="d-missionary-name" placeholder="Missionary's name">
+        <input type="tel" id="d-family-phone" placeholder="Your phone number">
+        <div>
+          <label class="date-label-sm" for="d-mission-start">Roughly when they left</label>
+          <input type="date" id="d-mission-start">
+        </div>
+        <div>
+          <label class="date-label-sm" for="d-expected-return">Roughly when their mission ends</label>
+          <input type="date" id="d-expected-return">
+        </div>
+      </div>
+      <div class="details-actions">
+        <button class="btn-primary" id="details-save-btn" onclick="saveDetails()">Save</button>
+        <button class="btn-ghost" onclick="skipDetails()">Skip for now</button>
+      </div>
+      <div class="details-msg" id="details-msg"></div>
+    </div>
+
     <div class="help-line">
       Lost your link, an update didn't show up, or something looks off?
       <a href="mailto:tyler@getmissionbridge.com">Email tyler@getmissionbridge.com</a> anytime.
@@ -392,6 +434,52 @@ function copyDashboardLink(btn) {
   });
 }
 
+function skipDetails() {
+  document.getElementById('details-card').style.display = 'none';
+}
+
+async function saveDetails() {
+  const token = new URLSearchParams(window.location.search).get('token');
+  const btn = document.getElementById('details-save-btn');
+  const msg = document.getElementById('details-msg');
+  if (!token) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  msg.textContent = '';
+
+  try {
+    const res = await fetch('https://missionbridge-backend.onrender.com/signup/details', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token,
+        missionaryName: document.getElementById('d-missionary-name').value.trim(),
+        familyPhone: document.getElementById('d-family-phone').value.trim(),
+        missionStartDate: document.getElementById('d-mission-start').value,
+        expectedReturnDate: document.getElementById('d-expected-return').value,
+      })
+    });
+
+    if (res.ok) {
+      btn.textContent = 'Saved';
+      msg.style.color = 'var(--sage-deep)';
+      msg.textContent = 'Thank you! You can update these anytime by emailing us.';
+      setTimeout(() => { document.getElementById('details-card').style.display = 'none'; }, 1400);
+    } else {
+      msg.style.color = '#B0473F';
+      msg.textContent = 'Something went wrong saving that. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Save';
+    }
+  } catch (err) {
+    msg.style.color = '#B0473F';
+    msg.textContent = 'Something went wrong saving that. Please try again.';
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  }
+}
+
 (function init() {
   const params = new URLSearchParams(window.location.search);
   const missionaryEmail = params.get('email');
@@ -415,6 +503,14 @@ function copyDashboardLink(btn) {
 
   if (missionaryName) {
     document.getElementById('missionary-name-slot').textContent = missionaryName;
+  }
+
+  // The details form saves via the token, not the email - without one
+  // (only possible on an old link from before dashboard tokens
+  // existed) there's no safe way to identify which record to update,
+  // so just hide it rather than show a form that can't actually save.
+  if (!dashboardToken) {
+    document.getElementById('details-card').style.display = 'none';
   }
 })();
 </script>

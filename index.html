@@ -857,16 +857,10 @@
           </div>
 
           <div id="full-signup-fields">
-            <input type="text" id="missionary-name" placeholder="Missionary's name (optional)">
             <input type="email" id="missionary-email" placeholder="Missionary's email address" required>
             <input type="email" id="missionary-email-confirm" placeholder="Confirm missionary's email address" required>
             <input type="email" id="family-email" placeholder="Parent or guardian's email address" required>
-            <input type="tel" id="family-phone" placeholder="Parent or guardian's phone number">
-            <label class="date-label" id="mission-start-label" for="mission-start-date">Roughly when they left (doesn't need to be exact)</label>
-            <input type="date" id="mission-start-date">
-            <label class="date-label" for="expected-return-date">Roughly when their mission ends (doesn't need to be exact either)</label>
-            <input type="date" id="expected-return-date">
-            <div class="field-hint">We'll email you a guide on saving their photos before this date.</div>
+            <div class="field-hint">We'll ask for their name, mission dates, and a couple other optional details right after checkout — no need to dig them up now.</div>
           </div>
 
           <div id="preorder-fields" style="display: none;">
@@ -932,7 +926,6 @@ function updateMissionStatusUI() {
   const status = document.querySelector('input[name="mission-status"]:checked').value;
   const fullFields = document.getElementById('full-signup-fields');
   const preorderFields = document.getElementById('preorder-fields');
-  const startLabel = document.getElementById('mission-start-label');
   const submitBtn = document.getElementById('signup-submit-btn');
 
   const missionaryEmail = document.getElementById('missionary-email');
@@ -956,9 +949,6 @@ function updateMissionStatusUI() {
     familyEmail.required = true;
     familyEmailPreorder.required = false;
     submitBtn.textContent = 'Get started — $50';
-    startLabel.textContent = status === 'not_yet_left'
-      ? "Roughly when they leave (doesn't need to be exact)"
-      : "Roughly when they left (doesn't need to be exact)";
   }
 }
 
@@ -1002,13 +992,9 @@ async function handleSignup(e) {
     return;
   }
 
-  const missionaryName = document.getElementById('missionary-name').value.trim();
   const missionaryEmail = document.getElementById('missionary-email').value.trim().toLowerCase();
   const missionaryEmailConfirm = document.getElementById('missionary-email-confirm').value.trim().toLowerCase();
   const familyEmail = document.getElementById('family-email').value.trim();
-  const familyPhone = document.getElementById('family-phone').value.trim();
-  const missionStartDate = document.getElementById('mission-start-date').value;
-  const expectedReturnDate = document.getElementById('expected-return-date').value;
 
   if (missionaryEmail !== missionaryEmailConfirm) {
     msg.textContent = "Those missionary email addresses don't match. Please double check and try again.";
@@ -1025,8 +1011,7 @@ async function handleSignup(e) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        missionaryEmail, missionaryName, familyEmail, familyPhone,
-        expectedReturnDate, missionStartDate, missionStatus: status
+        missionaryEmail, familyEmail, missionStatus: status
       })
     });
 
@@ -1037,7 +1022,6 @@ async function handleSignup(e) {
         return;
       }
       const params = new URLSearchParams({ email: missionaryEmail });
-      if (missionaryName) params.set('name', missionaryName);
       if (data.dashboard_token) params.set('token', data.dashboard_token);
       window.location.href = `welcome.html?${params.toString()}`;
       return;
