@@ -426,7 +426,7 @@
         <span id="analytics-summary"></span>
       </p>
       <div class="stats-grid" id="analytics-summary-grid" style="margin-bottom: 24px;"></div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
         <div>
           <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Pages</h3>
           <table>
@@ -441,6 +441,15 @@
           <table>
             <thead><tr><th>Source</th><th>Views</th></tr></thead>
             <tbody id="analytics-sources-body">
+              <tr><td colspan="2" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">By Device</h3>
+          <table>
+            <thead><tr><th>Device</th><th>Views</th></tr></thead>
+            <tbody id="analytics-device-body">
               <tr><td colspan="2" class="empty-row">Loading…</td></tr>
             </tbody>
           </table>
@@ -925,9 +934,19 @@ async function loadAnalytics() {
           </tr>
         `).join('')
       : `<tr><td colspan="2" class="empty-row">No views yet.</td></tr>`;
+
+    document.getElementById('analytics-device-body').innerHTML = (data.byDevice && data.byDevice.length)
+      ? data.byDevice.map(d => `
+          <tr>
+            <td data-label="Device">${d.device}</td>
+            <td data-label="Views">${d.views}</td>
+          </tr>
+        `).join('')
+      : `<tr><td colspan="2" class="empty-row">No views yet.</td></tr>`;
   } catch (err) {
     document.getElementById('analytics-pages-body').innerHTML = `<tr><td colspan="3" class="empty-row">Error loading analytics.</td></tr>`;
     document.getElementById('analytics-sources-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
+    document.getElementById('analytics-device-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
   }
 }
 
