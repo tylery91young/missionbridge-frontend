@@ -857,6 +857,10 @@
             </label>
           </div>
 
+          <div class="scope-note" id="mid-mission-note">
+            <strong>Already partway through their mission? You're not behind.</strong> Everything they send from today forward is saved automatically — for most families that's still the majority of the mission. Their past emails already live in your own inbox, and our free <a href="photo-guide.html" style="color: rgba(255,255,255,0.85);">Photo Rescue Guide</a> walks you through recovering their photos too, even starting now.
+          </div>
+
           <div id="full-signup-fields">
             <input type="email" id="missionary-email" placeholder="Missionary's email address" required>
             <input type="email" id="missionary-email-confirm" placeholder="Confirm missionary's email address" required>
@@ -932,11 +936,14 @@ function updateMissionStatusUI() {
   const fullFields = document.getElementById('full-signup-fields');
   const preorderFields = document.getElementById('preorder-fields');
   const submitBtn = document.getElementById('signup-submit-btn');
+  const midMissionNote = document.getElementById('mid-mission-note');
 
   const missionaryEmail = document.getElementById('missionary-email');
   const missionaryEmailConfirm = document.getElementById('missionary-email-confirm');
   const familyEmail = document.getElementById('family-email');
   const familyEmailPreorder = document.getElementById('family-email-preorder');
+
+  midMissionNote.style.display = status === 'serving' ? 'block' : 'none';
 
   if (status === 'preorder') {
     fullFields.style.display = 'none';
