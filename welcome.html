@@ -529,15 +529,22 @@ async function saveDetails() {
 <script>
 // First-party page tracking - stays on our own server, never sent to
 // a third party. Just tells us which pages get visited and roughly
-// where traffic came from, so we know what's working.
+// where traffic came from, so we know what's working. Skipped for
+// admin/testing visits - load any page once with ?notrack=1 and this
+// browser stops reporting page views for good.
 (function () {
   try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('notrack') === '1') {
+      localStorage.setItem('mb_no_track', '1');
+    }
+    if (localStorage.getItem('mb_no_track') === '1') return;
+
     let visitorId = localStorage.getItem('mb_visitor_id');
     if (!visitorId) {
       visitorId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
       localStorage.setItem('mb_visitor_id', visitorId);
     }
-    const params = new URLSearchParams(window.location.search);
     let referrer = 'Direct';
     if (document.referrer) {
       try { referrer = new URL(document.referrer).hostname || 'Direct'; } catch (e) {}

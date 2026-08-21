@@ -158,6 +158,22 @@
   .todo-item.done .todo-text { text-decoration: line-through; }
   .todo-item .todo-source { font-size: 11px; color: var(--sage); white-space: nowrap; }
 
+  /* VISITOR CHART */
+  .visitor-chart {
+    display: flex; align-items: flex-end; gap: 10px; height: 150px;
+    background: var(--cream-warm); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 16px 12px;
+  }
+  .visitor-chart .bar-col {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    height: 100%; min-width: 0;
+  }
+  .visitor-chart .bar-value { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .visitor-chart .bar {
+    width: 100%; max-width: 44px; background: var(--clay); border-radius: 4px 4px 0 0; min-height: 3px;
+  }
+  .visitor-chart .bar-label { font-size: 10.5px; color: var(--sage); margin-top: 7px; white-space: nowrap; }
+
   @media (max-width: 700px) {
     table, thead, tbody, th, td, tr { display: block; }
     th { display: none; }
@@ -426,6 +442,10 @@
         <span id="analytics-summary"></span>
       </p>
       <div class="stats-grid" id="analytics-summary-grid" style="margin-bottom: 24px;"></div>
+
+      <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Last 7 Days — Unique Visitors</h3>
+      <div class="visitor-chart" id="visitor-chart" style="margin-bottom: 28px;"></div>
+
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
         <div>
           <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Top Pages</h3>
@@ -454,6 +474,14 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div class="section-hint" style="margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--line);">
+        <strong style="color: var(--charcoal);">Remove test/admin traffic:</strong> from now on, load any page once with <code>?notrack=1</code> in the URL and that browser stops reporting page views for good. To clean up visits already logged (like your own testing), find your visitor ID via the browser console on that device — <code>localStorage.getItem('mb_visitor_id')</code> — and remove it below.
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 10px; max-width: 420px;">
+        <input type="text" id="purge-visitor-id" placeholder="Visitor ID to remove" style="flex:1; padding: 9px 14px; border: 1px solid var(--line); border-radius: 100px; font-size: 13.5px; font-family: inherit;">
+        <button class="refresh-btn" style="margin-bottom: 0;" onclick="purgeVisitor()">Remove</button>
       </div>
     </div>
   </div>
@@ -943,10 +971,59 @@ async function loadAnalytics() {
           </tr>
         `).join('')
       : `<tr><td colspan="2" class="empty-row">No views yet.</td></tr>`;
+
+    renderVisitorChart(data.byDay || []);
   } catch (err) {
     document.getElementById('analytics-pages-body').innerHTML = `<tr><td colspan="3" class="empty-row">Error loading analytics.</td></tr>`;
     document.getElementById('analytics-sources-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
     document.getElementById('analytics-device-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
+    document.getElementById('visitor-chart').innerHTML = `<div class="empty-row" style="width:100%;">Error loading chart.</div>`;
+  }
+}
+
+// byDay comes back most-recent-first, capped implicitly by whatever
+// "days" window was requested (30) - just take the newest 7 and flip
+// them to chronological order for a left-to-right chart.
+function renderVisitorChart(byDay) {
+  const chartEl = document.getElementById('visitor-chart');
+  if (!byDay.length) {
+    chartEl.innerHTML = `<div class="empty-row" style="width:100%;">No data yet.</div>`;
+    return;
+  }
+  const last7 = byDay.slice(0, 7).slice().reverse();
+  const max = Math.max(1, ...last7.map(d => parseInt(d.unique_visitors, 10)));
+  chartEl.innerHTML = last7.map(d => {
+    const count = parseInt(d.unique_visitors, 10);
+    const heightPct = Math.max(4, (count / max) * 100);
+    const label = new Date(d.day).toLocaleDateString(undefined, { weekday: 'short' });
+    return `
+      <div class="bar-col" title="${count} unique visitor${count === 1 ? '' : 's'}">
+        <div class="bar-value">${count}</div>
+        <div class="bar" style="height: ${heightPct}%;"></div>
+        <div class="bar-label">${label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function purgeVisitor() {
+  const input = document.getElementById('purge-visitor-id');
+  const visitorId = input.value.trim();
+  if (!visitorId) return;
+  if (!confirm(`Remove all page views for visitor ID "${visitorId}"? This can't be undone.`)) return;
+
+  try {
+    const res = await fetch(`${BACKEND}/admin/analytics/pageviews?visitorId=${encodeURIComponent(visitorId)}&key=${encodeURIComponent(adminKey)}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (res.ok) {
+      alert(`Removed ${data.deleted} page view(s).`);
+      input.value = '';
+      loadAnalytics();
+    } else {
+      alert(data.error || 'Something went wrong.');
+    }
+  } catch (err) {
+    alert('Something went wrong.');
   }
 }
 
