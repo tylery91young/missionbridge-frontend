@@ -627,6 +627,15 @@
   }
   .signup-form button:hover { background: var(--accent-deep); color: var(--white); transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
   .signup-form button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .buy-now-btn {
+    display: inline-block; width: 100%; text-align: center; margin-top: 26px;
+    background: linear-gradient(160deg, #d7ab72, var(--accent)); color: var(--navy-deep); border: none;
+    padding: 16px 28px; border-radius: 100px; font-weight: 700; font-size: 16px; font-family: 'Inter', sans-serif;
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+    cursor: pointer; text-decoration: none; transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .buy-now-btn:hover { background: var(--accent-deep); color: var(--white); transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
   .form-msg { color: rgba(255,255,255,0.75); font-size: 14px; margin-top: 18px; min-height: 18px; line-height: 1.5; }
 
   button:focus-visible, input:focus-visible, a:focus-visible {
@@ -840,6 +849,7 @@
             <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Includes our full guide to backing up their photos too</li>
             <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>It's yours — download it all anytime, ready to print or keep on your own schedule</li>
           </ul>
+          <a href="#signup" class="buy-now-btn" onclick="event.preventDefault(); document.getElementById('signup').scrollIntoView({behavior:'smooth'});">Get started — $50</a>
         </div>
       </div>
     </div>
