@@ -636,6 +636,8 @@
     cursor: pointer; text-decoration: none; transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   }
   .buy-now-btn:hover { background: var(--accent-deep); color: var(--white); transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(184,135,74,0.5); }
+  .buy-now-btn.secondary-btn { background: var(--navy); color: var(--white); box-shadow: none; }
+  .buy-now-btn.secondary-btn:hover { background: var(--navy-mid); box-shadow: none; }
   .form-msg { color: rgba(255,255,255,0.75); font-size: 14px; margin-top: 18px; min-height: 18px; line-height: 1.5; }
 
   button:focus-visible, input:focus-visible, a:focus-visible {
@@ -818,12 +820,11 @@
 <section class="section alt">
   <div class="wrap">
     <div class="section-head reveal">
-      <div class="section-eyebrow">Already partway through?</div>
-      <h2 class="section-title">What if my missionary is already serving?</h2>
+      <div class="section-eyebrow">Good to know</div>
+      <h2 class="section-title">Already serving? Sharing via Google Drive?</h2>
     </div>
     <div class="reveal" style="max-width: 640px;">
-      <p style="font-size: 17px; line-height: 1.65; margin-bottom: 14px;">No big deal, we can still help. A parent or the missionary can just quickly forward their past emails to your new archive address, so we save those too — sending them in the order they were originally sent works best.</p>
-      <p style="font-size: 17px; line-height: 1.65;">From there, we take over automatically. Everything new gets saved the moment it arrives, and our <a href="photo-save-guide.html" style="color: var(--accent-deep); font-weight: 600; text-decoration: underline;">Photo Save Guide</a> (included free with the Bridge) walks you through backing up their photos too, wherever you are in the mission.</p>
+      <p style="font-size: 17px; line-height: 1.65;">No problem either way. Already partway through the mission? Forward past emails to catch up, then the Bridge saves everything new automatically from here. Sharing photos as a Google Drive or Photos <em>link</em> instead of attaching them? We can't always pull those in automatically — that's exactly what the <a href="photo-save-guide.html" style="color: var(--accent-deep); font-weight: 600; text-decoration: underline;">Photo Save Guide</a> below is for.</p>
     </div>
   </div>
 </section>
@@ -831,29 +832,16 @@
 <section class="section">
   <div class="wrap">
     <div class="section-head reveal">
-      <div class="section-eyebrow">Good to know</div>
-      <h2 class="section-title">What about Google Drive or Photos links?</h2>
-    </div>
-    <div class="reveal" style="max-width: 640px;">
-      <p style="font-size: 17px; line-height: 1.65; margin-bottom: 14px;">The Bridge saves everything your missionary emails home directly. If they share something as a Google Drive or Google Photos <em>link</em> instead of attaching it, we can't always pull that in automatically — that's a real limit, worth knowing upfront.</p>
-      <p style="font-size: 17px; line-height: 1.65;">It's exactly why we built the <a href="photo-save-guide.html" style="color: var(--accent-deep); font-weight: 600; text-decoration: underline;">Photo Save Guide</a> — a real, step-by-step way to back up everything already on their phone, including what never gets emailed at all. $5 on its own, or included free with the Bridge.</p>
-    </div>
-  </div>
-</section>
-
-<section class="section alt">
-  <div class="wrap">
-    <div class="section-head reveal">
       <div class="section-eyebrow">What you get</div>
       <h2 class="section-title">One thing, done right. <em>Nothing to configure.</em></h2>
     </div>
     <div class="reveal">
       <div class="founding-note" id="founding-note">Founding rate for our first families.</div>
-      <div class="product-grid single">
+      <div class="product-grid">
         <div class="product-card primary">
-          <span class="product-tag">Core</span>
+          <span class="product-tag">The whole package</span>
           <h3>The Bridge</h3>
-          <p>Automatic backup of every email and photo your missionary sends home, safely kept for their entire mission and beyond.</p>
+          <p>Automatic backup of <strong>every email, photo, and voice memo</strong> your missionary sends home, safely kept for their entire mission and beyond. Set up once, nothing to manage after that.</p>
           <div class="product-price">$50<span> one-time · founding rate</span></div>
           <ul class="product-list">
             <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Set up in five minutes, no app needed</li>
@@ -863,6 +851,19 @@
             <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>It's yours — download it all anytime, ready to print or keep on your own schedule</li>
           </ul>
           <a href="#signup" class="buy-now-btn" onclick="event.preventDefault(); document.getElementById('signup').scrollIntoView({behavior:'smooth'});">Get started — $50</a>
+        </div>
+        <div class="product-card secondary">
+          <span class="product-tag">DIY add-on</span>
+          <h3>Photo Save Guide</h3>
+          <p>A do-it-yourself, step-by-step walkthrough for backing up <strong>Google Photos only</strong> — not emails, not voice memos, not the ongoing archive the Bridge handles. About 20 minutes, done once.</p>
+          <div class="product-price">$5<span> one-time</span></div>
+          <ul class="product-list">
+            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Covers Google Photos backup only</li>
+            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>You do the setup yourself, guided step by step</li>
+            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Already included free if you get the Bridge</li>
+            <li><svg class="li-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="4 13 9 18 20 6"/></svg>Money-back guarantee</li>
+          </ul>
+          <a href="photo-save-guide.html" class="buy-now-btn secondary-btn">Get the guide — $5</a>
         </div>
       </div>
     </div>
