@@ -225,7 +225,10 @@
         </svg>
       </div>
       <h1>Mission Bridge Archive Admin Overview</h1>
-      <div class="header-sub" id="last-checked">—</div>
+      <div class="header-sub" style="display: flex; align-items: center; gap: 12px;">
+        <span id="last-checked">—</span>
+        <button onclick="loadOverview(false)" id="header-refresh-btn" style="background: rgba(247,243,236,0.12); color: var(--cream); border: 1px solid rgba(247,243,236,0.25); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; cursor: pointer;">↻ Refresh</button>
+      </div>
     </div>
   </header>
 
@@ -490,6 +493,7 @@
 <script>
 const BACKEND = 'https://missionbridge-backend.onrender.com';
 let adminKey = '';
+let autoRefreshTimer = null;
 
 function showTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
@@ -513,6 +517,14 @@ async function loadOverview(isLoginAttempt = false) {
 
     document.getElementById('gate').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
+
+    // Auto-refresh every 60s once logged in, so the page stays current
+    // without ever needing to reload (and re-enter the key). Guarded
+    // so a manual refresh click or the timer itself never stacks a
+    // second interval on top of the first.
+    if (!autoRefreshTimer) {
+      autoRefreshTimer = setInterval(() => loadOverview(false), 60000);
+    }
 
     document.getElementById('last-checked').textContent = 'Last checked: ' + new Date(data.systemHealth.checkedAt).toLocaleString();
 
