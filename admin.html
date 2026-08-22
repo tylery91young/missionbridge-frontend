@@ -242,6 +242,7 @@
       <button class="tab-btn" data-tab="issues" onclick="showTab('issues')">Issues</button>
       <button class="tab-btn" data-tab="emails" onclick="showTab('emails')">Email Log</button>
       <button class="tab-btn" data-tab="referrals" onclick="showTab('referrals')">Referrals</button>
+      <button class="tab-btn" data-tab="guide-leads" onclick="showTab('guide-leads')">Guide Leads</button>
       <button class="tab-btn" data-tab="traffic" onclick="showTab('traffic')">Traffic</button>
     </div>
 
@@ -437,6 +438,47 @@
       </table>
     </div>
 
+    <!-- GUIDE LEADS TAB -->
+    <div class="tab-panel" id="tab-guide-leads">
+      <h2 class="section-title">Photo Save Guide Purchases</h2>
+      <p class="section-hint">Everyone who's bought the $5 guide — real contact info, meant to actually be worked for a Bridge upsell, not just observed.</p>
+      <div style="overflow-x: auto; border-radius: 12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Added Bridge?</th>
+            <th>Paid</th>
+            <th>Purchased</th>
+          </tr>
+        </thead>
+        <tbody id="guide-purchases-body">
+          <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 class="section-title">Guide Feedback</h2>
+      <p class="section-hint">Difficulty ratings and open comments left at the end of the guide — this is how a wrong or outdated step actually gets caught.</p>
+      <div style="overflow-x: auto; border-radius: 12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Difficulty</th>
+            <th>Comments</th>
+            <th>Email</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="guide-feedback-body">
+          <tr><td colspan="4" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
     <!-- TRAFFIC TAB -->
     <div class="tab-panel" id="tab-traffic">
       <h2 class="section-title">Site Traffic (last 30 days)</h2>
@@ -559,6 +601,7 @@ async function loadOverview(isLoginAttempt = false) {
     loadReferrals();
     loadAnalytics();
     loadTodos();
+    loadGuideLeads();
   } catch (err) {
     if (isLoginAttempt) document.getElementById('gate-error').textContent = 'Could not connect. Try again.';
   }
@@ -943,6 +986,43 @@ async function markReferralPaid(id) {
     loadReferrals();
   } catch (err) {
     alert('Something went wrong marking this paid. Please try again.');
+  }
+}
+
+async function loadGuideLeads() {
+  try {
+    const purchasesRes = await fetch(`${BACKEND}/admin/guide-purchases?key=${encodeURIComponent(adminKey)}`);
+    const purchases = await purchasesRes.json();
+
+    document.getElementById('guide-purchases-body').innerHTML = purchases.length
+      ? purchases.map(p => `
+          <tr>
+            <td data-label="Name">${p.name || '—'}</td>
+            <td data-label="Email">${p.email}</td>
+            <td data-label="Phone">${p.phone || '—'}</td>
+            <td data-label="Added Bridge?">${p.bridge_added_on ? (p.missionary_email ? `Yes — ${p.missionary_email}` : 'Yes') : 'No'}</td>
+            <td data-label="Paid">$${parseFloat(p.paid_amount).toFixed(2)}</td>
+            <td data-label="Purchased">${new Date(p.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('')
+      : `<tr><td colspan="6" class="empty-row">No guide purchases yet.</td></tr>`;
+
+    const feedbackRes = await fetch(`${BACKEND}/admin/guide-feedback?key=${encodeURIComponent(adminKey)}`);
+    const feedback = await feedbackRes.json();
+
+    document.getElementById('guide-feedback-body').innerHTML = feedback.length
+      ? feedback.map(f => `
+          <tr>
+            <td data-label="Difficulty">${f.difficulty || '—'}</td>
+            <td data-label="Comments">${f.comments || '—'}</td>
+            <td data-label="Email">${f.email || '—'}</td>
+            <td data-label="Submitted">${new Date(f.created_at).toLocaleString()}</td>
+          </tr>
+        `).join('')
+      : `<tr><td colspan="4" class="empty-row">No feedback yet.</td></tr>`;
+  } catch (err) {
+    document.getElementById('guide-purchases-body').innerHTML = `<tr><td colspan="6" class="empty-row">Error loading guide purchases.</td></tr>`;
+    document.getElementById('guide-feedback-body').innerHTML = `<tr><td colspan="4" class="empty-row">Error loading feedback.</td></tr>`;
   }
 }
 

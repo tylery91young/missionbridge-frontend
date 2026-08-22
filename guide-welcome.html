@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're all set - Mission Bridge Archive</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #2B3A4A; --navy-deep: #1D2733; --cream: #FFFFFF; --cream-warm: #F7F8FA;
+    --clay: #B8874A; --clay-deep: #96703A; --charcoal: #171B21; --sage: #8A93A1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--charcoal); font-family: 'Inter', sans-serif; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 0 28px; }
+  nav { padding: 22px 0; border-bottom: 1px solid rgba(23,27,33,0.10); }
+  nav .logo svg { height: 32px; width: auto; }
+
+  .confirm-hero { padding: 60px 0 36px; text-align: center; }
+  .check-badge {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--navy);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;
+  }
+  .check-badge svg { width: 24px; height: 24px; }
+  h1 { font-size: clamp(28px, 4vw, 36px); color: var(--navy); margin-bottom: 12px; font-weight: 600; }
+  .sub { font-size: 17.5px; color: rgba(23,27,33,0.72); }
+
+  .copy-box {
+    display: flex; align-items: center; gap: 10px; background: var(--cream-warm);
+    border: 1px solid rgba(23,27,33,0.10); border-radius: 10px; padding: 12px 14px; margin: 24px 0;
+  }
+  .copy-box span { flex: 1; word-break: break-all; font-weight: 600; color: var(--navy); font-size: 13.5px; }
+  .copy-box button {
+    background: var(--navy); color: var(--cream); border: none; padding: 7px 14px; border-radius: 7px;
+    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; flex-shrink: 0;
+  }
+
+  .btn-primary {
+    display: inline-block; background: var(--clay); color: var(--cream); border: none; padding: 15px 30px;
+    border-radius: 100px; font-size: 15.5px; font-weight: 700; text-decoration: none; margin-top: 8px;
+  }
+  .help-line { text-align: center; padding: 40px 0 60px; font-size: 14px; color: rgba(23,27,33,0.6); }
+  .help-line a { color: var(--clay-deep); font-weight: 600; text-decoration: none; }
+  .missing-state { text-align: center; padding: 90px 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap logo">
+    <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="32" font-family="Georgia, serif" font-weight="600" font-size="28" fill="#2B3A4A">Mission Bridge</text>
+      <text x="1" y="48" font-family="Inter, sans-serif" font-weight="700" font-size="13" letter-spacing="2.2" fill="#B8874A">ARCHIVE</text>
+    </svg>
+  </div>
+</nav>
+
+<div id="confirm-view" style="display: none;">
+  <header class="confirm-hero wrap">
+    <div class="check-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h1>You're all set.</h1>
+    <p class="sub">Your Photo Save Guide is ready right now, and we've also emailed a copy of this link to <strong id="email-slot">you</strong> so you never lose it.</p>
+    <div class="copy-box">
+      <span id="guide-link-text">—</span>
+      <button onclick="copyLink(this)">Copy</button>
+    </div>
+    <a class="btn-primary" id="guide-link-btn" href="#">Open the guide →</a>
+  </header>
+</div>
+
+<div id="missing-view" class="missing-state wrap" style="display: none;">
+  <h1>We couldn't find your purchase</h1>
+  <p class="sub" style="margin-bottom: 22px;">This page needs a link from checkout. Check your email for the access link, or reach out below.</p>
+  <a class="btn-primary" href="photo-save-guide.html">Back to the guide</a>
+</div>
+
+<div class="help-line">
+  Questions, or something not working right? <a href="mailto:tyler@getmissionbridge.com">Email tyler@getmissionbridge.com</a> anytime.
+</div>
+
+<script>
+function copyLink(btn) {
+  const url = document.getElementById('guide-link-btn').href;
+  navigator.clipboard.writeText(url).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+}
+
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get('email');
+  const token = params.get('token');
+
+  if (!token) {
+    document.getElementById('missing-view').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('confirm-view').style.display = 'block';
+  const guideUrl = `https://getmissionbridge.com/photo-guide.html?token=${encodeURIComponent(token)}`;
+  document.getElementById('guide-link-text').textContent = guideUrl;
+  document.getElementById('guide-link-btn').href = guideUrl;
+  if (email) document.getElementById('email-slot').textContent = email;
+})();
+</script>
+
+<script>
+// First-party page tracking - stays on our own server, never sent to
+// a third party. Just tells us which pages get visited and roughly
+// where traffic came from, so we know what's working. Skipped for
+// admin/testing visits - load any page once with ?notrack=1 and this
+// browser stops reporting page views for good.
+(function () {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('notrack') === '1') {
+      localStorage.setItem('mb_no_track', '1');
+    }
+    if (localStorage.getItem('mb_no_track') === '1') return;
+
+    let visitorId = localStorage.getItem('mb_visitor_id');
+    if (!visitorId) {
+      visitorId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      localStorage.setItem('mb_visitor_id', visitorId);
+    }
+    let referrer = 'Direct';
+    if (document.referrer) {
+      try { referrer = new URL(document.referrer).hostname || 'Direct'; } catch (e) {}
+    }
+    fetch('https://missionbridge-backend.onrender.com/track/pageview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        path: window.location.pathname,
+        referrer,
+        utmSource: params.get('utm_source'),
+        utmMedium: params.get('utm_medium'),
+        utmCampaign: params.get('utm_campaign'),
+        visitorId,
+      }),
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>
