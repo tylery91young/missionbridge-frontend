@@ -529,7 +529,9 @@
   }
   .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
   .product-grid.single { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
-  .product-card { position: relative; border-radius: 22px; padding: 42px 38px; overflow: hidden; }
+  .product-card { position: relative; border-radius: 22px; padding: 42px 38px; overflow: hidden; display: flex; flex-direction: column; }
+  .product-card .product-list { flex: 1; }
+  .product-card .buy-now-btn { margin-top: 26px; }
   .product-card.primary { background: linear-gradient(160deg, #34465a, var(--navy) 55%, var(--navy-mid)); color: var(--white); box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.1); }
   .product-card.primary::before {
     content: '';
@@ -537,6 +539,14 @@
     background: linear-gradient(90deg, var(--accent), var(--navy-mid));
   }
   .product-card.secondary { background: linear-gradient(165deg, #FFFFFF, var(--bg-soft)); border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
+
+  .mini-faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 780px; }
+  .mini-faq-item { background: #FFFFFF; border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
+  .mini-faq-item h3 { font-size: 16.5px; color: var(--navy); margin-bottom: 8px; font-weight: 600; }
+  .mini-faq-item p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; }
+  @media (max-width: 655px) {
+    .mini-faq-grid { grid-template-columns: 1fr; }
+  }
   .product-tag {
     display: inline-block; font-size: 11.5px; font-weight: 600;
     letter-spacing: 0.07em; text-transform: uppercase;
@@ -821,10 +831,16 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div class="section-eyebrow">Good to know</div>
-      <h2 class="section-title">Already serving? Sharing via Google Drive?</h2>
     </div>
-    <div class="reveal" style="max-width: 640px;">
-      <p style="font-size: 17px; line-height: 1.65;">No problem either way. Already partway through the mission? Forward past emails to catch up, then the Bridge saves everything new automatically from here. Sharing photos as a Google Drive or Photos <em>link</em> instead of attaching them? We can't always pull those in automatically — that's exactly what the <a href="photo-save-guide.html" style="color: var(--accent-deep); font-weight: 600; text-decoration: underline;">Photo Save Guide</a> below is for.</p>
+    <div class="mini-faq-grid reveal">
+      <div class="mini-faq-item">
+        <h3>Already serving?</h3>
+        <p>No problem — forward past emails to catch up, then the Bridge saves everything new automatically.</p>
+      </div>
+      <div class="mini-faq-item">
+        <h3>Sharing via Google Drive?</h3>
+        <p>We can't always pull those in — that's exactly what the <a href="photo-save-guide.html" style="color: var(--accent-deep); font-weight: 600;">Photo Save Guide</a> below is for.</p>
+      </div>
     </div>
   </div>
 </section>
