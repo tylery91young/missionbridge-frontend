@@ -239,6 +239,7 @@
   }
   .btn-primary:hover { background: linear-gradient(160deg, #3d5268, var(--navy-mid)); transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(43,58,74,0.45); }
   .hero-note { font-size: 13.5px; color: var(--ink-faint); font-weight: 600; }
+  .hero-scope-note { font-size: 14.5px; color: var(--ink-soft); margin-top: 18px; max-width: 470px; line-height: 1.55; }
 
   .hero-visual-wrap { position: relative; perspective: 1600px; }
   .hero-visual-wrap::after {
@@ -835,7 +836,7 @@
       <h2 class="section-title">One thing, done right. <em>Nothing to configure.</em></h2>
     </div>
     <div class="reveal">
-      <div class="founding-note" id="founding-note">Founding rate for our first families, $75 once this batch is full.</div>
+      <div class="founding-note" id="founding-note">Founding rate for our first families.</div>
       <div class="product-grid single">
         <div class="product-card primary">
           <span class="product-tag">Core</span>
@@ -1125,6 +1126,13 @@ if ('IntersectionObserver' in window) {
 // Real, honest scarcity - fetched from the backend, never fabricated.
 // If this fails for any reason, both elements just stay hidden/as
 // their static fallback text rather than show something untrue.
+//
+// Turned off for now (commented out, not deleted) - a static "spots
+// left" number that never moves reads as fake scarcity to a skeptical
+// first-time visitor, especially with zero visible proof anyone's
+// actually claimed one. Re-enable once there's real signup volume to
+// point to. See ROADMAP.md.
+/*
 (async function loadFoundingStatus() {
   try {
     const res = await fetch('https://missionbridge-backend.onrender.com/founding-status');
@@ -1145,6 +1153,7 @@ if ('IntersectionObserver' in window) {
     // Fail silently - the page already works fine with the static fallback copy.
   }
 })();
+*/
 </script>
 
 <script>
