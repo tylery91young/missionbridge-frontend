@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — Mission Bridge Archive</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -298,7 +299,7 @@
     <div class="header-top">
       <div>
         <div class="brand">
-          <svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg" style="height: 22px; width: auto;">
+          <a href="index.html" aria-label="Mission Bridge Archive - home" style="display:contents;"><svg viewBox="0 0 400 56" xmlns="http://www.w3.org/2000/svg" style="height: 22px; width: auto;">
             <defs>
               <linearGradient id="fadeLeftDash" x1="100%" y1="0%" x2="0%" y2="0%">
                 <stop offset="0%" stop-color="#F7F3EC" stop-opacity="1"/>
@@ -322,7 +323,7 @@
             </g>
             <text x="172" y="22" font-family="Georgia, serif" font-weight="600" font-size="24" fill="#F7F3EC">Mission Bridge</text>
             <text x="173" y="37" font-family="Inter, sans-serif" font-weight="700" font-size="11.5" letter-spacing="2" fill="#B8874A">ARCHIVE</text>
-          </svg>
+          </svg></a>
         </div>
         <h1 id="missionary-title">Loading archive…</h1>
       </div>
@@ -339,6 +340,9 @@
     </div>
     <div class="link-security-note">
       🔒 There's no password on this page. This exact link is the only way anyone sees this dashboard, so bookmark it somewhere safe and only share it with people you trust.
+    </div>
+    <div class="link-security-note" id="home-early-note" style="display:none;">
+      🏠 <span id="home-early-text"></span>
     </div>
   </div>
 </header>
@@ -410,6 +414,7 @@ async function loadDashboard() {
     document.getElementById('dl-photos').href = `${BACKEND}/download/${encodeURIComponent(resolvedMissionaryEmail)}?type=photos`;
     document.getElementById('dl-emails').href = `${BACKEND}/download/${encodeURIComponent(resolvedMissionaryEmail)}?type=emails`;
 
+    renderHomeEarlyNote(data.missionary?.came_home_early_at);
     renderMoments();
   } catch (err) {
     document.getElementById('content').innerHTML = `
@@ -417,6 +422,30 @@ async function loadDashboard() {
         <h2>Something went wrong</h2>
         <p>We couldn't load this archive right now. Please try again shortly.</p>
       </div>`;
+  }
+}
+
+function renderHomeEarlyNote(cameHomeEarlyAt) {
+  const note = document.getElementById('home-early-note');
+  const text = document.getElementById('home-early-text');
+  if (cameHomeEarlyAt) {
+    text.innerHTML = `Thanks for letting us know they're home early. We've noted it on your account.`;
+  } else {
+    text.innerHTML = `Missionary came home early? <a href="#" onclick="markHomeEarly(); return false;" style="color: inherit; text-decoration: underline;">Let us know</a>.`;
+  }
+  note.style.display = 'block';
+}
+
+async function markHomeEarly() {
+  if (!confirm("Let us know your missionary is home early? We'll just note it on your account, nothing else changes automatically.")) return;
+  try {
+    const res = await fetch(`${BACKEND}/dashboard/${encodeURIComponent(resolvedMissionaryEmail)}/home-early`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      renderHomeEarlyNote(data.cameHomeEarlyAt);
+    }
+  } catch (err) {
+    alert("Something went wrong saving that - please try again.");
   }
 }
 
