@@ -100,6 +100,8 @@
   .editable { border: 1px solid transparent; background: transparent; font-size: 14px; font-family: inherit; padding: 4px 6px; border-radius: 6px; width: 70px; }
   .editable:focus { border-color: var(--clay); outline: none; background: var(--cream-warm); }
   .notes-input { width: 100%; min-width: 100px; }
+  .reachout-cell { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: var(--sage); white-space: nowrap; }
+  .reachout-cell input { cursor: pointer; }
 
   .refresh-btn {
     background: var(--navy); color: var(--cream); border: none; padding: 8px 18px;
@@ -237,6 +239,7 @@
     <div class="tab-bar" id="tab-bar">
       <button class="tab-btn active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
       <button class="tab-btn" data-tab="customers" onclick="showTab('customers')">Customers</button>
+      <button class="tab-btn" data-tab="leads" onclick="showTab('leads')">Leads <span class="tab-badge" id="leads-badge" style="display:none;"></span></button>
       <button class="tab-btn" data-tab="todos" onclick="showTab('todos')">To-Dos <span class="tab-badge" id="todo-badge" style="display:none;"></span></button>
       <button class="tab-btn" data-tab="expenditures" onclick="showTab('expenditures')">Expenditures</button>
       <button class="tab-btn" data-tab="activity" onclick="showTab('activity')">Activity</button>
@@ -254,6 +257,7 @@
 
       <h2 class="section-title">Needs Your Attention</h2>
       <div class="stats-grid attention-grid">
+        <div class="stat-card" onclick="showTab('leads')"><div class="label">Open Leads</div><div class="value" id="dash-leads-count">—</div></div>
         <div class="stat-card" onclick="showTab('todos')"><div class="label">Open To-Dos</div><div class="value" id="dash-todo-count">—</div></div>
         <div class="stat-card" onclick="showTab('referrals')"><div class="label">Referral $ Owed</div><div class="value" id="dash-referral-owed">—</div></div>
         <div class="stat-card" onclick="showTab('issues')"><div class="label">Detected Issues</div><div class="value" id="dash-issues-count">—</div></div>
@@ -313,6 +317,30 @@
         </thead>
         <tbody id="customers-body">
           <tr><td colspan="11" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- LEADS TAB -->
+    <div class="tab-panel" id="tab-leads">
+      <h2 class="section-title">Leads</h2>
+      <p class="section-hint">Filled out the signup form but never finished Stripe checkout. They drop off this list on their own once a payment comes through. Check a box when you've reached out — it stamps that day's date.</p>
+      <button class="refresh-btn" onclick="loadLeads()">Refresh</button>
+      <div style="overflow-x: auto; border-radius: 12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Contact</th>
+            <th>Filled Out Form</th>
+            <th>Reach-out 1</th>
+            <th>Reach-out 2</th>
+            <th>Notes</th>
+            <th style="min-width: 90px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="leads-body">
+          <tr><td colspan="6" class="empty-row">Loading…</td></tr>
         </tbody>
       </table>
       </div>
@@ -595,6 +623,7 @@ async function loadOverview(isLoginAttempt = false) {
     `;
 
     loadCustomers();
+    loadLeads();
     loadExpenditures();
     loadDashboardActivity();
     loadEmailLog();
@@ -670,6 +699,81 @@ async function loadCustomers() {
 
 function escapeAttr(str) {
   return String(str).replace(/'/g, "\\'");
+}
+
+async function loadLeads() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/leads?key=${encodeURIComponent(adminKey)}`);
+    const leads = await res.json();
+
+    const badge = document.getElementById('leads-badge');
+    if (leads.length > 0) {
+      badge.textContent = leads.length;
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+    const dashCount = document.getElementById('dash-leads-count');
+    if (dashCount) dashCount.textContent = leads.length;
+
+    if (leads.length === 0) {
+      document.getElementById('leads-body').innerHTML = `<tr><td colspan="6" class="empty-row">No open leads — everyone who filled out the form has either paid or hasn't been chased yet.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('leads-body').innerHTML = leads.map(l => `
+      <tr>
+        <td data-label="Contact">
+          <div class="name-cell">${l.familyEmail}</div>
+          <div class="email-cell">${l.isPreorder ? '⏳ Preorder — no missionary info yet' : (l.missionaryName || l.missionaryEmail || '(no missionary name given)')}</div>
+          ${l.familyPhone ? `<div class="email-cell">📞 ${l.familyPhone}</div>` : ''}
+        </td>
+        <td data-label="Filled Out Form">
+          ${new Date(l.filledOutAt).toLocaleDateString()}
+          <div class="email-cell">${l.daysSinceSignup}d ago</div>
+        </td>
+        <td data-label="Reach-out 1">
+          <label class="reachout-cell">
+            <input type="checkbox" ${l.reachout1At ? 'checked' : ''} onchange="setLeadReachout(${l.id}, 1, this)">
+            <span>${l.reachout1At ? new Date(l.reachout1At).toLocaleDateString() : '—'}</span>
+          </label>
+        </td>
+        <td data-label="Reach-out 2">
+          <label class="reachout-cell">
+            <input type="checkbox" ${l.reachout2At ? 'checked' : ''} onchange="setLeadReachout(${l.id}, 2, this)">
+            <span>${l.reachout2At ? new Date(l.reachout2At).toLocaleDateString() : '—'}</span>
+          </label>
+        </td>
+        <td data-label="Notes">
+          <input class="editable notes-input" type="text" value="${(l.notes || '').replace(/"/g, '&quot;')}" placeholder="e.g. left voicemail…" onchange="updateCustomer(${l.id}, 'notes', this.value)">
+        </td>
+        <td data-label="Actions">
+          <div class="action-row">
+            <button class="icon-btn" onclick="createPaymentLink(${l.id})" title="Create a Stripe payment link to send them">💳</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('leads-body').innerHTML = `<tr><td colspan="6" class="empty-row">Error loading leads.</td></tr>`;
+  }
+}
+
+async function setLeadReachout(id, which, el) {
+  const done = el.checked;
+  const label = el.parentElement.querySelector('span');
+  try {
+    const res = await fetch(`${BACKEND}/admin/leads/${id}/reachout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+      body: JSON.stringify({ which, done })
+    });
+    if (!res.ok) throw new Error('save failed');
+    if (label) label.textContent = done ? new Date().toLocaleDateString() : '—';
+  } catch (err) {
+    el.checked = !done; // roll the toggle back if the save didn't land
+    alert('Could not save that. Try again.');
+  }
 }
 
 function toggleAddCustomer(show) {
