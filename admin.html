@@ -870,7 +870,16 @@ async function submitManualCustomer() {
         expectedReturnDate, missionStartDate, missionStatus, paidAmount, notes, sendEmails,
       })
     });
-    const data = await res.json();
+    // A cold-starting or briefly-down backend can return a plain-text
+    // or HTML error page instead of JSON (Render free tier spins down
+    // after idle time and the first request while it wakes can time
+    // out) - res.json() would throw on that and get swallowed by the
+    // generic catch below, hiding real diagnostic info. Read as text
+    // first and only parse it as JSON if it looks like JSON.
+    const rawBody = await res.text();
+    let data = {};
+    try { data = rawBody ? JSON.parse(rawBody) : {}; } catch (parseErr) { /* not JSON */ }
+
     if (res.ok) {
       alert(`Customer created.${data.dashboardUrl ? '\n\nDashboard: ' + data.dashboardUrl : ''}${data.referralCode ? '\nReferral code: ' + data.referralCode : ''}`);
       ['ac-missionary-name', 'ac-missionary-email', 'ac-family-email', 'ac-family-phone', 'ac-expected-return', 'ac-mission-start', 'ac-notes'].forEach(id => document.getElementById(id).value = '');
@@ -878,11 +887,13 @@ async function submitManualCustomer() {
       toggleAddCustomer(false);
       loadCustomers();
       loadOverview();
+    } else if (data.error) {
+      alert(data.error);
     } else {
-      alert(data.error || 'Something went wrong creating this customer.');
+      alert(`Something went wrong creating this customer (server responded with status ${res.status}). If the backend was just idle, it may still be waking up - wait 30 seconds and try again.`);
     }
   } catch (err) {
-    alert('Something went wrong creating this customer.');
+    alert(`Could not reach the server: ${err.message}. If the backend was just idle, it may still be waking up - wait 30 seconds and try again.`);
   }
 }
 
