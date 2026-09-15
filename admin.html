@@ -76,6 +76,11 @@
     padding: 6px 14px; border-radius: 100px; font-size: 12.5px; font-weight: 600; cursor: pointer;
   }
   .kick-btn:hover { background: rgba(176,71,63,0.18); }
+  .guide-badge {
+    display: inline-block; background: rgba(184,135,74,0.14); color: var(--clay-deep);
+    border: 1px solid rgba(184,135,74,0.3); padding: 2px 8px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; margin-top: 4px;
+  }
   .action-row { display: flex; gap: 5px; flex-wrap: nowrap; white-space: nowrap; }
   .icon-btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -161,21 +166,19 @@
   .todo-item.done .todo-text { text-decoration: line-through; }
   .todo-item .todo-source { font-size: 11px; color: var(--sage); white-space: nowrap; }
 
-  /* VISITOR CHART */
-  .visitor-chart {
-    display: flex; align-items: flex-end; gap: 10px; height: 150px;
-    background: var(--cream-warm); border: 1px solid var(--line); border-radius: 12px;
-    padding: 16px 16px 12px;
+  /* VISITOR LINE CHART */
+  .line-chart-wrap {
+    position: relative; background: var(--cream-warm); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px; height: 260px;
   }
-  .visitor-chart .bar-col {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    height: 100%; min-width: 0;
+  .line-chart-wrap svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .chart-tooltip {
+    position: absolute; display: none; pointer-events: none; z-index: 2;
+    background: var(--navy); color: var(--cream); font-size: 12.5px; font-weight: 600;
+    padding: 7px 11px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -115%);
+    box-shadow: 0 4px 10px rgba(23,27,33,0.18);
   }
-  .visitor-chart .bar-value { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-  .visitor-chart .bar {
-    width: 100%; max-width: 44px; background: var(--clay); border-radius: 4px 4px 0 0; min-height: 3px;
-  }
-  .visitor-chart .bar-label { font-size: 10.5px; color: var(--sage); margin-top: 7px; white-space: nowrap; }
+  .chart-tooltip .tt-sub { font-weight: 400; color: rgba(247,243,236,0.7); font-size: 11px; margin-top: 1px; }
 
   @media (max-width: 700px) {
     table, thead, tbody, th, td, tr { display: block; }
@@ -517,8 +520,11 @@
       </p>
       <div class="stats-grid" id="analytics-summary-grid" style="margin-bottom: 24px;"></div>
 
-      <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">Last 7 Days — Unique Visitors</h3>
-      <div class="visitor-chart" id="visitor-chart" style="margin-bottom: 28px;"></div>
+      <h3 style="font-size: 15px; color: var(--sage); margin-bottom: 10px;">All-Time — Unique Visitors</h3>
+      <div class="line-chart-wrap" id="line-chart-wrap" style="margin-bottom: 28px;">
+        <svg id="visitor-line-chart" viewBox="0 0 900 260" preserveAspectRatio="none"></svg>
+        <div class="chart-tooltip" id="chart-tooltip"></div>
+      </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
         <div>
@@ -647,11 +653,40 @@ async function loadCustomers() {
       return;
     }
 
-    document.getElementById('customers-body').innerHTML = customers.map(c => `
+    document.getElementById('customers-body').innerHTML = customers.map(c => {
+      if (c.customerType === 'guide') {
+        // Guide-only buyer - never has a missionaries row, so none of
+        // the usual editable fields or Bridge actions apply here.
+        return `
+      <tr>
+        <td data-label="Missionary">
+          <div class="name-cell">${c.missionaryName || '(no name given)'}</div>
+          <span class="guide-badge">📷 Photo Guide customer</span>
+        </td>
+        <td data-label="Family Email"><span class="email-cell">${c.familyEmail}</span></td>
+        <td data-label="Phone">${c.familyPhone || '—'}</td>
+        <td data-label="Expected Return">—</td>
+        <td data-label="Signed Up">${new Date(c.signedUpAt).toLocaleDateString()} (${c.daysSinceSignup}d ago)</td>
+        <td data-label="Updates">—</td>
+        <td data-label="Storage">—</td>
+        <td data-label="Paid">$${c.paidAmount.toFixed(2)}</td>
+        <td data-label="Notes">Photo Guide customer</td>
+        <td data-label="⚠️" style="text-align: center;">—</td>
+        <td data-label="Actions">
+          <div class="action-row">
+            <button class="icon-btn" onclick="showTab('guide-leads')" title="See in Guide Leads tab">📷</button>
+          </div>
+        </td>
+      </tr>
+      `;
+      }
+
+      return `
       <tr style="${c.isRemoved ? 'opacity: 0.5;' : ''}">
         <td data-label="Missionary">
           <div class="name-cell">${c.missionaryEmail ? (c.missionaryName || '(no name given)') : '⏳ Preorder - no missionary info yet'}</div>
           <input class="editable email-cell" style="width: 100%; min-width: 160px;" type="email" value="${c.missionaryEmail || ''}" placeholder="no missionary email yet" onchange="updateCustomer(${c.id}, 'missionaryEmail', this.value)">
+          ${c.boughtPhotoGuide ? `<span class="guide-badge">📷 Also bought Photo Guide</span>` : ''}
         </td>
         <td data-label="Family Email">
           <input class="editable" style="width: 100%; min-width: 160px;" type="email" value="${c.familyEmail}" onchange="updateCustomer(${c.id}, 'familyEmail', this.value)">
@@ -691,7 +726,8 @@ async function loadCustomers() {
           </div>
         </td>
       </tr>
-    `).join('');
+      `;
+    }).join('');
   } catch (err) {
     document.getElementById('customers-body').innerHTML = `<tr><td colspan="11" class="empty-row">Error loading customers.</td></tr>`;
   }
@@ -750,12 +786,33 @@ async function loadLeads() {
         <td data-label="Actions">
           <div class="action-row">
             <button class="icon-btn" onclick="createPaymentLink(${l.id})" title="Create a Stripe payment link to send them">💳</button>
+            <button class="icon-btn danger" onclick="deleteLead(${l.id}, '${escapeAttr(l.missionaryName || l.missionaryEmail || l.familyEmail)}')" title="Delete this lead - permanent, cannot be undone">🗑️</button>
           </div>
         </td>
       </tr>
     `).join('');
   } catch (err) {
     document.getElementById('leads-body').innerHTML = `<tr><td colspan="6" class="empty-row">Error loading leads.</td></tr>`;
+  }
+}
+
+async function deleteLead(id, name) {
+  const confirmed = confirm(`Permanently delete the lead for ${name}?\n\nThis isn't a paying customer, so there's no undo - it just removes them from this list for good.`);
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`${BACKEND}/admin/leads/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-key': adminKey }
+    });
+    if (res.ok) {
+      loadLeads();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || 'Something went wrong, that lead was not deleted.');
+    }
+  } catch (err) {
+    alert('Something went wrong, that lead was not deleted.');
   }
 }
 
@@ -1169,39 +1226,169 @@ async function loadAnalytics() {
           </tr>
         `).join('')
       : `<tr><td colspan="2" class="empty-row">No views yet.</td></tr>`;
-
-    renderVisitorChart(data.byDay || []);
   } catch (err) {
     document.getElementById('analytics-pages-body').innerHTML = `<tr><td colspan="3" class="empty-row">Error loading analytics.</td></tr>`;
     document.getElementById('analytics-sources-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
     document.getElementById('analytics-device-body').innerHTML = `<tr><td colspan="2" class="empty-row">Error loading analytics.</td></tr>`;
-    document.getElementById('visitor-chart').innerHTML = `<div class="empty-row" style="width:100%;">Error loading chart.</div>`;
+  }
+
+  loadVisitorChart();
+}
+
+// Separate from the 30-day summary above - this pulls the entire
+// history since launch (the backend caps "days" at 3650, well beyond
+// anything this business will hit) so the chart is a true all-time
+// view, not just whatever window the summary stats happen to use.
+async function loadVisitorChart() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/analytics?key=${encodeURIComponent(adminKey)}&days=3650`);
+    const data = await res.json();
+    renderVisitorChart(data.byDay || []);
+  } catch (err) {
+    document.getElementById('line-chart-wrap').innerHTML = `<div class="empty-row" style="width:100%;">Error loading chart.</div>`;
   }
 }
 
-// byDay comes back most-recent-first, capped implicitly by whatever
-// "days" window was requested (30) - just take the newest 7 and flip
-// them to chronological order for a left-to-right chart.
+// byDay only has rows for days with at least one view (GROUP BY DATE),
+// so this fills every missing day in between with a zero - otherwise
+// a quiet stretch would silently compress the x-axis instead of
+// showing as a flat line.
+function buildContinuousSeries(byDay) {
+  if (!byDay.length) return [];
+  const sorted = byDay.slice().sort((a, b) => new Date(a.day) - new Date(b.day));
+  const byDate = new Map(sorted.map(d => [new Date(d.day).toISOString().slice(0, 10), d]));
+  const start = new Date(sorted[0].day);
+  const end = new Date();
+  end.setHours(0, 0, 0, 0);
+  const series = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const key = d.toISOString().slice(0, 10);
+    const row = byDate.get(key);
+    series.push({
+      date: new Date(d),
+      visitors: row ? parseInt(row.unique_visitors, 10) : 0,
+      views: row ? parseInt(row.views, 10) : 0,
+    });
+  }
+  return series;
+}
+
+let visitorChartSeries = [];
+
 function renderVisitorChart(byDay) {
-  const chartEl = document.getElementById('visitor-chart');
-  if (!byDay.length) {
-    chartEl.innerHTML = `<div class="empty-row" style="width:100%;">No data yet.</div>`;
+  const wrap = document.getElementById('line-chart-wrap');
+  const svg = document.getElementById('visitor-line-chart');
+  const tooltip = document.getElementById('chart-tooltip');
+
+  visitorChartSeries = buildContinuousSeries(byDay);
+  if (!visitorChartSeries.length) {
+    svg.innerHTML = '';
+    tooltip.style.display = 'none';
+    wrap.querySelector('.empty-row')?.remove();
+    wrap.insertAdjacentHTML('beforeend', `<div class="empty-row" style="width:100%;">No data yet.</div>`);
     return;
   }
-  const last7 = byDay.slice(0, 7).slice().reverse();
-  const max = Math.max(1, ...last7.map(d => parseInt(d.unique_visitors, 10)));
-  chartEl.innerHTML = last7.map(d => {
-    const count = parseInt(d.unique_visitors, 10);
-    const heightPct = Math.max(4, (count / max) * 100);
-    const label = new Date(d.day).toLocaleDateString(undefined, { weekday: 'short' });
+  wrap.querySelector('.empty-row')?.remove();
+
+  const W = 900, H = 260, padL = 34, padR = 12, padT = 14, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  const max = Math.max(1, ...visitorChartSeries.map(d => d.visitors));
+  const n = visitorChartSeries.length;
+  const x = i => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const y = v => padT + plotH - (v / max) * plotH;
+
+  const linePoints = visitorChartSeries.map((d, i) => `${x(i)},${y(d.visitors)}`).join(' ');
+  const areaPoints = `${padL},${padT + plotH} ${linePoints} ${x(n - 1)},${padT + plotH}`;
+
+  // A handful of evenly-spaced date labels rather than one per day -
+  // "all time" can be months long, so every label would just overlap.
+  const labelCount = Math.min(6, n);
+  const labelIndices = Array.from({ length: labelCount }, (_, i) =>
+    Math.round((i / Math.max(1, labelCount - 1)) * (n - 1))
+  );
+  const xLabels = [...new Set(labelIndices)].map(i => {
+    const label = visitorChartSeries[i].date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    return `<text x="${x(i)}" y="${H - 6}" font-size="10.5" fill="#8A93A1" text-anchor="middle">${label}</text>`;
+  }).join('');
+
+  const yTicks = [0, 0.5, 1].map(f => {
+    const val = Math.round(max * f);
+    const yy = y(val);
     return `
-      <div class="bar-col" title="${count} unique visitor${count === 1 ? '' : 's'}">
-        <div class="bar-value">${count}</div>
-        <div class="bar" style="height: ${heightPct}%;"></div>
-        <div class="bar-label">${label}</div>
-      </div>
+      <line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="rgba(23,27,33,0.10)" stroke-width="1" />
+      <text x="${padL - 8}" y="${yy + 3}" font-size="10.5" fill="#8A93A1" text-anchor="end">${val}</text>
     `;
   }).join('');
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="visitorFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#B8874A" stop-opacity="0.28" />
+        <stop offset="100%" stop-color="#B8874A" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    ${yTicks}
+    <polygon points="${areaPoints}" fill="url(#visitorFill)" />
+    <polyline points="${linePoints}" fill="none" stroke="#B8874A" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" />
+    ${xLabels}
+    <line id="chart-hover-line" x1="0" y1="${padT}" x2="0" y2="${padT + plotH}" stroke="#2B3A4A" stroke-width="1" stroke-dasharray="3,3" opacity="0" />
+    <circle id="chart-hover-dot" r="4.5" fill="#2B3A4A" opacity="0" />
+    <rect id="chart-hover-target" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="transparent" />
+  `;
+
+  const hoverLine = document.getElementById('chart-hover-line');
+  const hoverDot = document.getElementById('chart-hover-dot');
+  const hoverTarget = document.getElementById('chart-hover-target');
+
+  function showPoint(i, clientX, clientY) {
+    const d = visitorChartSeries[i];
+    hoverLine.setAttribute('x1', x(i));
+    hoverLine.setAttribute('x2', x(i));
+    hoverLine.setAttribute('opacity', 1);
+    hoverDot.setAttribute('cx', x(i));
+    hoverDot.setAttribute('cy', y(d.visitors));
+    hoverDot.setAttribute('opacity', 1);
+
+    const wrapRect = wrap.getBoundingClientRect();
+    tooltip.style.left = (clientX - wrapRect.left) + 'px';
+    tooltip.style.top = (clientY - wrapRect.top) + 'px';
+    tooltip.style.display = 'block';
+    tooltip.innerHTML = `
+      ${d.visitors} unique visitor${d.visitors === 1 ? '' : 's'}
+      <div class="tt-sub">${d.date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} · ${d.views} view${d.views === 1 ? '' : 's'}</div>
+    `;
+  }
+
+  function hidePoint() {
+    hoverLine.setAttribute('opacity', 0);
+    hoverDot.setAttribute('opacity', 0);
+    tooltip.style.display = 'none';
+  }
+
+  function handleMove(evt) {
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+    let nearest = 0;
+    let nearestDist = Infinity;
+    for (let i = 0; i < n; i++) {
+      const dist = Math.abs(x(i) - svgPt.x);
+      if (dist < nearestDist) { nearestDist = dist; nearest = i; }
+    }
+    showPoint(nearest, evt.clientX, evt.clientY);
+  }
+
+  hoverTarget.addEventListener('mousemove', handleMove);
+  hoverTarget.addEventListener('mouseleave', hidePoint);
+  hoverTarget.addEventListener('touchmove', evt => {
+    if (evt.touches.length) {
+      evt.preventDefault();
+      handleMove(evt.touches[0]);
+    }
+  }, { passive: false });
+  hoverTarget.addEventListener('touchend', hidePoint);
 }
 
 async function purgeVisitor() {
