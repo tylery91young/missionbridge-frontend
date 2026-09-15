@@ -702,6 +702,10 @@ async function loadCustomers() {
         <td data-label="Storage">${c.storageUsedMB} MB</td>
         <td data-label="Paid">
           $<input class="editable" type="number" value="${c.paidAmount}" onchange="updateCustomer(${c.id}, 'paidAmount', this.value)">
+          <label class="reachout-cell" style="margin-top:4px;" title="A real customer who isn't paying - e.g. friends &amp; family. Keeps them out of the Leads list for good.">
+            <input type="checkbox" ${c.isComped ? 'checked' : ''} onchange="toggleComped(${c.id}, this.checked)">
+            <span>Comped</span>
+          </label>
         </td>
         <td data-label="Notes">
           <input class="editable notes-input" type="text" value="${c.notes || ''}" placeholder="Add a note…" onchange="updateCustomer(${c.id}, 'notes', this.value)">
@@ -786,6 +790,7 @@ async function loadLeads() {
         <td data-label="Actions">
           <div class="action-row">
             <button class="icon-btn" onclick="createPaymentLink(${l.id})" title="Create a Stripe payment link to send them">💳</button>
+            <button class="icon-btn restore" onclick="markLeadAsComped(${l.id}, '${escapeAttr(l.missionaryName || l.missionaryEmail || l.familyEmail)}')" title="Not a lead - a real customer who shouldn't pay (friends &amp; family, etc.)">🎁</button>
             <button class="icon-btn danger" onclick="deleteLead(${l.id}, '${escapeAttr(l.missionaryName || l.missionaryEmail || l.familyEmail)}')" title="Delete this lead - permanent, cannot be undone">🗑️</button>
           </div>
         </td>
@@ -1057,6 +1062,33 @@ async function updateCustomer(id, field, value) {
     headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
     body: JSON.stringify(body)
   });
+}
+
+// Marks (or unmarks) a real customer who isn't paying - friends &
+// family, a comp, etc. This is what actually keeps them out of the
+// Leads list and out of "delete lead," so a real $0 customer can never
+// get mistaken for an abandoned signup again.
+async function toggleComped(id, checked, opts = {}) {
+  try {
+    const res = await fetch(`${BACKEND}/admin/customers/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+      body: JSON.stringify({ isComped: checked })
+    });
+    if (!res.ok) throw new Error('save failed');
+    if (opts.onDone) opts.onDone();
+    loadCustomers();
+    loadLeads();
+    loadOverview();
+  } catch (err) {
+    alert('Could not save that. Try again.');
+  }
+}
+
+async function markLeadAsComped(id, name) {
+  const confirmed = confirm(`Mark ${name} as a real free customer?\n\nThis takes them off the Leads list for good and adds them to Customers at $0 - use this for friends & family or anyone else who should stay on without paying.`);
+  if (!confirmed) return;
+  await toggleComped(id, true);
 }
 
 async function loadDashboardActivity() {
