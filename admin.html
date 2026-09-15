@@ -690,6 +690,7 @@ async function loadCustomers() {
         </td>
         <td data-label="Family Email">
           <input class="editable" style="width: 100%; min-width: 160px;" type="email" value="${c.familyEmail}" onchange="updateCustomer(${c.id}, 'familyEmail', this.value)">
+          <input class="editable email-cell" style="width: 100%; min-width: 160px; margin-top:4px;" type="email" value="${c.secondaryEmail || ''}" placeholder="+ forwarding email (optional)" title="An extra address allowed to forward mail on this missionary's behalf - e.g. someone catching a family up on lost history." onchange="updateCustomer(${c.id}, 'secondaryEmail', this.value)">
         </td>
         <td data-label="Phone">${c.familyPhone || '—'}</td>
         <td data-label="Expected Return">
