@@ -328,7 +328,7 @@
     <!-- LEADS TAB -->
     <div class="tab-panel" id="tab-leads">
       <h2 class="section-title">Leads</h2>
-      <p class="section-hint">Filled out the signup form but never finished Stripe checkout. They drop off this list on their own once a payment comes through. Check a box when you've reached out — it stamps that day's date.</p>
+      <p class="section-hint">Filled out the signup form but never finished Stripe checkout. They drop off this list on their own once a payment comes through. Check a box when you've reached out — it stamps that day's date. The 🗑️ button here only removes someone from this list — it can't delete any data, and can always be undone below.</p>
       <button class="refresh-btn" onclick="loadLeads()">Refresh</button>
       <div style="overflow-x: auto; border-radius: 12px;">
       <table>
@@ -344,6 +344,23 @@
         </thead>
         <tbody id="leads-body">
           <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 class="section-title" style="margin-top: 40px;">Recently Dismissed <span class="tab-badge" id="dismissed-badge" style="display:none;"></span></h2>
+      <p class="section-hint">Removed from the list above, but nothing about them was deleted - restore any of these anytime.</p>
+      <div style="overflow-x: auto; border-radius: 12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Contact</th>
+            <th>Dismissed</th>
+            <th style="min-width: 90px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="dismissed-leads-body">
+          <tr><td colspan="3" class="empty-row">Loading…</td></tr>
         </tbody>
       </table>
       </div>
@@ -792,7 +809,7 @@ async function loadLeads() {
           <div class="action-row">
             <button class="icon-btn" onclick="createPaymentLink(${l.id})" title="Create a Stripe payment link to send them">💳</button>
             <button class="icon-btn restore" onclick="markLeadAsComped(${l.id}, '${escapeAttr(l.missionaryName || l.missionaryEmail || l.familyEmail)}')" title="Not a lead - a real customer who shouldn't pay (friends &amp; family, etc.)">🎁</button>
-            <button class="icon-btn danger" onclick="deleteLead(${l.id}, '${escapeAttr(l.missionaryName || l.missionaryEmail || l.familyEmail)}')" title="Delete this lead - permanent, cannot be undone">🗑️</button>
+            <button class="icon-btn danger" onclick="deleteLead(${l.id}, '${escapeAttr(l.missionaryName || l.missionaryEmail || l.familyEmail)}')" title="Remove from this list - safe, doesn't delete anything, can be restored below">🗑️</button>
           </div>
         </td>
       </tr>
@@ -800,10 +817,12 @@ async function loadLeads() {
   } catch (err) {
     document.getElementById('leads-body').innerHTML = `<tr><td colspan="6" class="empty-row">Error loading leads.</td></tr>`;
   }
+
+  loadDismissedLeads();
 }
 
 async function deleteLead(id, name) {
-  const confirmed = confirm(`Permanently delete the lead for ${name}?\n\nThis isn't a paying customer, so there's no undo - it just removes them from this list for good.`);
+  const confirmed = confirm(`Remove ${name} from the Leads list?\n\nThis is safe - nothing is deleted. It just hides them from this list, and you can bring them right back from "Recently Dismissed" below if this was a mistake.`);
   if (!confirmed) return;
 
   try {
@@ -811,14 +830,69 @@ async function deleteLead(id, name) {
       method: 'DELETE',
       headers: { 'x-admin-key': adminKey }
     });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      if (data.warning) alert(data.warning);
+      loadLeads();
+    } else {
+      alert(data.error || 'Something went wrong, that lead was not dismissed.');
+    }
+  } catch (err) {
+    alert('Something went wrong, that lead was not dismissed.');
+  }
+}
+
+async function loadDismissedLeads() {
+  try {
+    const res = await fetch(`${BACKEND}/admin/leads/dismissed?key=${encodeURIComponent(adminKey)}`);
+    const dismissed = await res.json();
+
+    const badge = document.getElementById('dismissed-badge');
+    if (dismissed.length > 0) {
+      badge.textContent = dismissed.length;
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    if (dismissed.length === 0) {
+      document.getElementById('dismissed-leads-body').innerHTML = `<tr><td colspan="3" class="empty-row">Nothing dismissed.</td></tr>`;
+      return;
+    }
+
+    document.getElementById('dismissed-leads-body').innerHTML = dismissed.map(l => `
+      <tr>
+        <td data-label="Contact">
+          <div class="name-cell">${l.familyEmail}</div>
+          <div class="email-cell">${l.missionaryName || l.missionaryEmail || '(no missionary name given)'}</div>
+        </td>
+        <td data-label="Dismissed">${new Date(l.dismissedAt).toLocaleString()}</td>
+        <td data-label="Actions">
+          <div class="action-row">
+            <button class="icon-btn restore" onclick="restoreDismissedLead(${l.id})" title="Bring back to the Leads list">♻️</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('dismissed-leads-body').innerHTML = `<tr><td colspan="3" class="empty-row">Error loading dismissed leads.</td></tr>`;
+  }
+}
+
+async function restoreDismissedLead(id) {
+  try {
+    const res = await fetch(`${BACKEND}/admin/leads/${id}/restore`, {
+      method: 'POST',
+      headers: { 'x-admin-key': adminKey }
+    });
     if (res.ok) {
       loadLeads();
     } else {
       const data = await res.json().catch(() => ({}));
-      alert(data.error || 'Something went wrong, that lead was not deleted.');
+      alert(data.error || 'Something went wrong restoring that lead.');
     }
   } catch (err) {
-    alert('Something went wrong, that lead was not deleted.');
+    alert('Something went wrong restoring that lead.');
   }
 }
 
