@@ -708,6 +708,10 @@ async function loadCustomers() {
         <td data-label="Family Email">
           <input class="editable" style="width: 100%; min-width: 160px;" type="email" value="${c.familyEmail}" onchange="updateCustomer(${c.id}, 'familyEmail', this.value)">
           <input class="editable email-cell" style="width: 100%; min-width: 160px; margin-top:4px;" type="email" value="${c.secondaryEmail || ''}" placeholder="+ forwarding email (optional)" title="An extra address allowed to forward mail on this missionary's behalf - e.g. someone catching a family up on lost history." onchange="updateCustomer(${c.id}, 'secondaryEmail', this.value)">
+          <label class="reachout-cell" style="margin-top:4px;" title="Stops the 'we found a link we can't save' alert from firing on every email - useful while forwarding a big batch of old mail back in at once.">
+            <input type="checkbox" ${c.linkAlertsDisabled ? 'checked' : ''} onchange="updateCustomer(${c.id}, 'linkAlertsDisabled', this.checked)">
+            <span>Mute link alerts</span>
+          </label>
         </td>
         <td data-label="Phone">${c.familyPhone || '—'}</td>
         <td data-label="Expected Return">
@@ -1012,7 +1016,7 @@ async function deleteForever(id, name, missionaryEmail, familyEmail) {
     const res = await fetch(`${BACKEND}/admin/customers/${id}/delete-forever`, {
       method: 'POST',
       headers: { 'x-admin-key': adminKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ confirmEmail: typed.trim() })
+      body: JSON.stringify({ confirmEmail: typed.trim(), confirmPhrase: 'DELETE FOREVER' })
     });
     if (res.ok) {
       alert('Deleted permanently.');
