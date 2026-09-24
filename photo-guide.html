@@ -264,6 +264,17 @@ async function submitGuideFeedback() {
   }
 }
 
+// Paused as of Sept 2026: the backend that verified a purchase token
+// is gone, so there's no way to check one anymore. Rather than lock
+// out everyone who already paid for this (fail closed), this page
+// now just shows the content to everyone (fail open) - the guide
+// itself isn't sensitive, and past purchasers keeping access matters
+// more than gating it. The original token-check version is commented
+// out below in case a backend comes back.
+document.getElementById('checking-state').style.display = 'none';
+document.getElementById('guide-content').style.display = 'block';
+
+/*
 (async function checkAccess() {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token');
@@ -288,6 +299,7 @@ async function submitGuideFeedback() {
     document.getElementById('gate-denied').style.display = 'block';
   }
 })();
+*/
 </script>
 
 <script>
